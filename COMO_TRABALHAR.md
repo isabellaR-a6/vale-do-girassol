@@ -120,6 +120,10 @@ gera e publica a versão nova sozinho**, em 1–2 minutos. Nada de arrastar past
   O site continua mostrando a última versão que deu certo.
 - A receita do build fica no `netlify.toml`. Ele fixa o **Python 3.12**, porque o Netlify usa uma versão mais nova
   por padrão, e o pygame ainda não funciona nela (o Netlify instala o `requirements.txt` sozinho antes do build).
+- A página do jogo é o **`web/pagina.tmpl`** (não o modelo padrão do pygbag): é ela que encaixa a tela em 16:9
+  ao abrir, girar o celular ou redimensionar, bloqueia o zoom e deixa os pixels nítidos. O ícone é o `web/icone.png`.
+- O selo "Powered by Netlify" está **desligado** (Project configuration → General → Powered by Netlify badge),
+  porque ficava por cima das opções do jogo.
 
 > Esse site é **separado** do site da VSC. Não ligue este repositório ao site da oficina.
 
