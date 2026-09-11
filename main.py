@@ -93,15 +93,19 @@ def eh_celular():
         return False
 
 
-def tela_girada():
-    """Na web, com o celular em pé, a página mostra o jogo girado 90° (ver web/pagina.tmpl)."""
-    if not WEB:
-        return False
+def toque_na_pagina():
+    """Onde o último dedo tocou, em coordenadas do jogo (0 a 1), calculado pela página (web/pagina.tmpl).
+
+    A página já leva em conta a tela girada (celular em pé); o SDL não sabe da rotação.
+    """
     try:
         import platform
-        return bool(platform.window.telaGirada)
+        x, y = platform.window.toqueX, platform.window.toqueY
+        if x is None or y is None:
+            return None
+        return float(x), float(y)
     except Exception:
-        return False
+        return None
 
 
 def icone_janela():
@@ -235,17 +239,15 @@ class Jogo:
         posição antiga do mouse; o evento FINGERDOWN traz a posição certa (de 0 a 1).
         No app Android é o contrário: o FINGERDOWN conta a tela inteira (com as barras pretas),
         e o clique de imitação já vem convertido para a tela do jogo. Lá usamos só o clique.
-        Com o celular em pé, a página gira o jogo 90° (web/pagina.tmpl); aí o toque é "desgirado".
+        Com o celular em pé, a página gira o jogo 90° (web/pagina.tmpl) e calcula o toque "desgirado".
         """
         if ev.type == pygame.FINGERDOWN:
             self.ui.usar_layout(True)  # tocou na tela: é celular/tablet, usa letra e botões grandes
             if not WEB:
                 return None
             self.usou_toque = True
-            u, v = ev.x, ev.y
-            if tela_girada():
-                u, v = v, 1 - u  # o jogo está girado 90° no sentido horário
-            pos = (int(u * LARGURA), int(v * ALTURA))
+            u, v = toque_na_pagina() or (ev.x, ev.y)
+            pos = (min(LARGURA - 1, int(u * LARGURA)), min(ALTURA - 1, int(v * ALTURA)))
             self.ui.evento(pygame.event.Event(pygame.MOUSEMOTION, pos=pos))  # destaca a opção tocada
             return pygame.event.Event(pygame.MOUSEBUTTONDOWN, pos=pos, button=1)
         if (self.usou_toque and getattr(ev, "touch", False)

@@ -177,7 +177,8 @@ function ajustarTela() {
                          : Math.min(largura / c.width, altura / c.height);
     const w = Math.floor(c.width * escala) + "px";
     const h = Math.floor(c.height * escala) + "px";
-    const t = girar ? "rotate(90deg)" : "none";
+    // centraliza pelo meio (o CSS põe o canto em 50%/50%) e só depois gira
+    const t = girar ? "translate(-50%, -50%) rotate(90deg)" : "translate(-50%, -50%)";
     if (c.style.width !== w || c.style.height !== h || c.style.transform !== t) {
         c.style.width = w;
         c.style.height = h;
@@ -185,6 +186,25 @@ function ajustarTela() {
     }
     window.telaGirada = girar;
 }
+
+// Guarda onde o dedo tocou, já em coordenadas do jogo (0 a 1), levando em conta a tela girada.
+// O Python lê window.toqueX / window.toqueY no evento FINGERDOWN.
+function registrarToque(ev) {
+    const c = document.getElementById("canvas");
+    const toque = ev.changedTouches && ev.changedTouches[0];
+    if (!c || !toque) return;
+    const r = c.getBoundingClientRect();
+    let u = (toque.clientX - r.left) / r.width;
+    let v = (toque.clientY - r.top) / r.height;
+    if (window.telaGirada) {  // girado 90° no sentido horário: o topo do jogo fica à direita
+        const jogoX = v;
+        v = 1 - u;
+        u = jogoX;
+    }
+    window.toqueX = Math.min(1, Math.max(0, u));
+    window.toqueY = Math.min(1, Math.max(0, v));
+}
+document.addEventListener("touchstart", registrarToque, {capture: true, passive: true});
 window.ajustarTela = ajustarTela;
 window.addEventListener("resize", ajustarTela);
 window.addEventListener("orientationchange", () => setTimeout(ajustarTela, 250));
@@ -270,13 +290,14 @@ setInterval(ajustarTela, 500);
             z-index: 5;
 
             padding: 0;
-            margin: auto;              /* centraliza (as bordas que sobram ficam marrom) */
+            margin: 0;
 
+            /* centralizada pelo meio: o canto fica em 50%/50% e o transform (ajustarTela) puxa de volta
+               metade do tamanho; assim funciona também girada. As bordas que sobram ficam marrom. */
             position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
 
             image-rendering: pixelated;      /* pixel art nítida ao ampliar */
             image-rendering: crisp-edges;
