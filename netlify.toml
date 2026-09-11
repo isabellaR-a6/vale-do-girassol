@@ -1,0 +1,5 @@
+# Publicação automática: com o site do Netlify ligado a este repositório do GitHub,
+# cada "git push" gera a versão web com o pygbag e publica sozinho.
+[build]
+  command = "pip install pygbag==0.9.3 && python -X utf8 -m pygbag --build --title \"Vale do Girassol\" ."
+  publish = "build/web"

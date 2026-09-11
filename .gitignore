@@ -1,0 +1,4 @@
+__pycache__/
+save_fazenda.json
+build/
+.claude/settings.local.json

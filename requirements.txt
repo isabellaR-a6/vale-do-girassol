@@ -1,0 +1,2 @@
+pygame>=2.6      # para rodar o jogo
+pygbag>=0.9.3    # só para gerar a versão web (celular/navegador)
