@@ -108,15 +108,18 @@ Teclas: **M** liga/desliga a música, **F11** tela cheia.
 
 ## 6. Versão web (celular) e publicação
 
-### Jeito automático (recomendado): Netlify ligado ao GitHub
+### Jeito automático (já está ligado ✅)
 
-Faça uma vez:
+🎮 **Link do jogo: https://vale-do-girassol.netlify.app**
+📋 Painel dos deploys: https://app.netlify.com/projects/vale-do-girassol/deploys
 
-1. Entre em https://app.netlify.com → **Add new site** → **Import an existing project** → **GitHub**.
-2. Escolha o repositório **vale-do-girassol**. As configurações de build já vêm do arquivo `netlify.toml`.
-3. Clique em **Deploy**. Pronto: o link do jogo aparece no painel (dá para trocar o nome em *Site configuration*).
+O projeto **vale-do-girassol** do Netlify está ligado a este repositório. **Cada `git push` no branch `main`
+gera e publica a versão nova sozinho**, em 1–2 minutos. Nada de arrastar pasta.
 
-Depois disso, **cada `git push` publica a versão nova sozinho**, em 1–2 minutos.
+- Se um deploy falhar, abra o painel acima, clique no deploy com status **Failed** e leia o log.
+  O site continua mostrando a última versão que deu certo.
+- A receita do build fica no `netlify.toml`. Ele fixa o **Python 3.12**, porque o Netlify usa uma versão mais nova
+  por padrão, e o pygame ainda não funciona nela (o Netlify instala o `requirements.txt` sozinho antes do build).
 
 > Esse site é **separado** do site da VSC. Não ligue este repositório ao site da oficina.
 

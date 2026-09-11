@@ -3,6 +3,8 @@
 RPG de escolhas numa fazenda, feito 100% em Python (pygame) com pixel art desenhada em código.
 Nenhuma imagem ou som externo: sprites, fonte pixelada e efeitos 8-bit são gerados pelo próprio jogo.
 
+> 🎮 **Jogar agora (celular ou PC):** https://vale-do-girassol.netlify.app — deite o celular e toque na tela.
+>
 > 💻 **Vai trabalhar de outro notebook?** Veja o passo a passo em [COMO_TRABALHAR.md](COMO_TRABALHAR.md)
 > (instalar, baixar do GitHub, rotina `git pull` / `git push` e publicação).
 
@@ -24,8 +26,8 @@ Elas trocam sozinhas conforme o lugar, com transição suave.
 
 O [pygbag](https://pygame-web.github.io) transforma o jogo num site estático (Python rodando em WebAssembly).
 
-**Publicação automática:** ligando um site do Netlify a este repositório do GitHub, cada `git push`
-gera e publica a versão web sozinho (a receita está no `netlify.toml`). Passo a passo em [COMO_TRABALHAR.md](COMO_TRABALHAR.md#6-versão-web-celular-e-publicação).
+**Publicação automática (ligada):** o site https://vale-do-girassol.netlify.app está ligado a este repositório;
+cada `git push` gera e publica a versão web sozinho (a receita está no `netlify.toml`). Passo a passo em [COMO_TRABALHAR.md](COMO_TRABALHAR.md#6-versão-web-celular-e-publicação).
 
 **Gerar à mão** (rode *dentro* desta pasta, para ele ler o `pygbag.ini`, que deixa o save de fora):
 
