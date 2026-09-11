@@ -20,7 +20,7 @@ permissions:
 
 concurrency:
   group: apk
-  cancel-in-progress: true   # se enviar de novo no meio, cancela o build antigo
+  cancel-in-progress: false  # um build por vez: se enviar de novo no meio, o novo espera o atual terminar
 
 jobs:
   apk:

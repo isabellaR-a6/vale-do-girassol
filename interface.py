@@ -443,17 +443,3 @@ class UI:
         y = (18 if self.celular else 30) + int(math.sin(t * 1.5) * 3)
         self.contornado(s, "Vale do Girassol", LARGURA // 2, y, COR["amarelo"], 4, sombra=COR["laranja"])
         self.contornado(s, "um RPG de escolhas na fazenda", LARGURA // 2, y + 56, COR["creme"], 2)
-
-    def gire_o_celular(self, s, t):
-        """Tela que aparece quando o celular está em pé: o jogo é jogado deitado."""
-        s.fill(COR["noite"])
-        cx, cy = LARGURA // 2, 120
-        ang = (math.sin(t * 2) + 1) / 2 * 90  # o celular desenhado vai deitando e levantando
-        celular = pygame.Surface((44, 80), pygame.SRCALPHA)
-        arredondado(celular, COR["creme"], celular.get_rect())
-        celular.fill(COR["ceu"], (4, 8, 36, 62))
-        celular.fill(COR["contorno"], (18, 73, 8, 3))
-        girado = pygame.transform.rotate(celular, -ang)
-        s.blit(girado, girado.get_rect(center=(cx, cy)))
-        self.contornado(s, "Gire o celular", cx, 190, COR["amarelo"], 4, sombra=COR["laranja"])
-        self.contornado(s, "Este jogo é jogado deitado", cx, 250, COR["creme"], 2)

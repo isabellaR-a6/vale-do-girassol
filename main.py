@@ -93,6 +93,17 @@ def eh_celular():
         return False
 
 
+def tela_girada():
+    """Na web, com o celular em pé, a página mostra o jogo girado 90° (ver web/pagina.tmpl)."""
+    if not WEB:
+        return False
+    try:
+        import platform
+        return bool(platform.window.telaGirada)
+    except Exception:
+        return False
+
+
 def icone_janela():
     s = pygame.Surface((32, 32), pygame.SRCALPHA)
     pygame.draw.line(s, COR["folha"], (16, 18), (16, 31), 3)
@@ -124,8 +135,6 @@ class Jogo:
         self.ui.tocar = self.sons.tocar
         self.cenario = Cenario()
         self.cena = pygame.Surface((LARGURA, ARTE_A * ESCALA_ARTE))  # no celular ela é recortada em cima
-        self.em_pe = False           # celular em pé (retrato)? então pede para girar
-        self._checar_em_pe = 0.0
         self.historia = Historia()
         self.demo = estado_demo()
         self.ui.nova_tela(self.historia.titulo())
@@ -209,13 +218,12 @@ class Jogo:
                     self.ui.flutuar("Música ligada" if ligada else "Música desligada", LARGURA // 2 - 40, 90,
                                     COR["creme"])
                     continue
-                if self.fade_dir or self.em_pe:
+                if self.fade_dir:
                     continue
                 resultado = self.ui.evento(ev)
                 if resultado is not None:
                     self.escolher(resultado)
             self._atualizar_fade(dt)
-            self._atualizar_orientacao(dt)
             self.musica.atualizar()
             self.ui.atualizar(dt)
             self._desenhar(dt)
@@ -227,13 +235,17 @@ class Jogo:
         posição antiga do mouse; o evento FINGERDOWN traz a posição certa (de 0 a 1).
         No app Android é o contrário: o FINGERDOWN conta a tela inteira (com as barras pretas),
         e o clique de imitação já vem convertido para a tela do jogo. Lá usamos só o clique.
+        Com o celular em pé, a página gira o jogo 90° (web/pagina.tmpl); aí o toque é "desgirado".
         """
         if ev.type == pygame.FINGERDOWN:
             self.ui.usar_layout(True)  # tocou na tela: é celular/tablet, usa letra e botões grandes
             if not WEB:
                 return None
             self.usou_toque = True
-            pos = (int(ev.x * LARGURA), int(ev.y * ALTURA))
+            u, v = ev.x, ev.y
+            if tela_girada():
+                u, v = v, 1 - u  # o jogo está girado 90° no sentido horário
+            pos = (int(u * LARGURA), int(v * ALTURA))
             self.ui.evento(pygame.event.Event(pygame.MOUSEMOTION, pos=pos))  # destaca a opção tocada
             return pygame.event.Event(pygame.MOUSEBUTTONDOWN, pos=pos, button=1)
         if (self.usou_toque and getattr(ev, "touch", False)
@@ -253,24 +265,7 @@ class Jogo:
             if self.fade <= 0:
                 self.fade_dir = 0
 
-    def _atualizar_orientacao(self, dt):
-        """No navegador do celular, confere de vez em quando se ele está em pé."""
-        if not (WEB and self.ui.celular):
-            return
-        self._checar_em_pe -= dt
-        if self._checar_em_pe <= 0:
-            self._checar_em_pe = 0.5
-            try:
-                import platform
-                self.em_pe = platform.window.innerHeight > platform.window.innerWidth
-            except Exception:
-                self.em_pe = False
-
     def _desenhar(self, dt):
-        if self.em_pe:
-            self.ui.gire_o_celular(self.tela, self.t)
-            pygame.display.flip()
-            return
         tela_atual = self.ui.tela
         e = self.demo if tela_atual.local == "titulo" else self.historia.e
         self.tela.fill(COR["contorno"])

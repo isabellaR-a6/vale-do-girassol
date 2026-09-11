@@ -136,7 +136,8 @@ python -X utf8 -m pygbag --build --archive --title "Vale do Girassol" --template
 Isso cria `build/web` (arraste em https://app.netlify.com/drop) e `build/web.zip` (para o itch.io).
 Rode **dentro da pasta do projeto**, para ele ler o `pygbag.ini`. O `-X utf8` evita erro com acentos no Windows.
 
-No celular: abra o link, **deite o celular** e toque na tela. Em pé aparece "Gire o celular".
+No celular: abra o link e toque na tela para começar. Se o celular estiver em pé, o jogo aparece girado:
+é só **virar o celular de lado** (funciona mesmo com a rotação automática travada).
 
 ## 6b. App Android (APK) feito pelo GitHub
 

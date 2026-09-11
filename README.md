@@ -47,7 +47,7 @@ Isso cria `build/web/` (o site) e `build/web.zip` (para o itch.io). O `-X utf8` 
 Na web o save fica guardado no navegador (localStorage), separado do save do computador.
 
 **Modo celular:** em telas de toque o jogo usa letra 2× maior e botões altos, e mostra
-"Gire o celular" se ele estiver em pé (o jogo é só deitado). Para ver esse layout no PC: `python main.py --celular`.
+o jogo girado se ele estiver em pé: é só virar o celular de lado, mesmo com a rotação travada. Para ver esse layout no PC: `python main.py --celular`.
 
 ## O jogo
 

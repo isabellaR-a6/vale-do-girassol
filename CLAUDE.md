@@ -13,7 +13,8 @@ fonte bitmap e música chiptune **gerados em código** (sem imagens nem áudio e
 ## Decisões da dona do projeto (respeitar)
 
 - Projeto **separado e independente** do site "VSC Serviços Automotivos" (`Documentos\VSC`). Nunca pôr nada do jogo lá.
-- O jogo é jogado **deitado** (paisagem). Em pé, no celular, aparece "Gire o celular".
+- O jogo é jogado **deitado** (paisagem). Na web, com o celular em pé, a página gira o jogo 90° (funciona com a
+  rotação travada) e o toque é "desgirado" em `main._traduzir_toque`. Nunca bloquear o jogo em pé.
 - Mensagens de commit em português; commit/push só quando pedirem (ela costuma pedir para manter o GitHub em dia).
 
 ## Estrutura

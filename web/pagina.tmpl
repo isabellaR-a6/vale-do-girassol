@@ -2,7 +2,8 @@
 
 # Modelo de página do Vale do Girassol, baseado no default.tmpl do pygbag 0.9.3.
 # Mudanças: viewport certo no celular (sem zoom), tela sempre encaixada em 16:9
-# com pixels nítidos, e tela de carregamento em português com as cores do jogo.
+# com pixels nítidos (girada 90° com o celular em pé), e tela de carregamento em
+# português com as cores do jogo.
 
 print("""
 Loading {{cookiecutter.title}} from {{cookiecutter.archive}}.apk
@@ -162,6 +163,8 @@ function show_infobox() {
 }
 
 // Encaixa a tela do jogo (640x360) na janela inteira, mantendo a proporção 16:9.
+// Celular em pé: o jogo é girado 90° para ficar deitado na tela, então é só virar o celular de lado
+// (funciona até com a rotação automática travada). O Python lê window.telaGirada para ajustar o toque.
 // Roda ao abrir, ao girar o celular, ao redimensionar e de tempos em tempos.
 function ajustarTela() {
     const c = document.getElementById("canvas");
@@ -169,13 +172,18 @@ function ajustarTela() {
     const vv = window.visualViewport;
     const largura = vv ? vv.width : window.innerWidth;
     const altura = vv ? vv.height : window.innerHeight;
-    const escala = Math.min(largura / c.width, altura / c.height);
+    const girar = altura > largura && window.matchMedia("(pointer: coarse)").matches;
+    const escala = girar ? Math.min(largura / c.height, altura / c.width)
+                         : Math.min(largura / c.width, altura / c.height);
     const w = Math.floor(c.width * escala) + "px";
     const h = Math.floor(c.height * escala) + "px";
-    if (c.style.width !== w || c.style.height !== h) {
+    const t = girar ? "rotate(90deg)" : "none";
+    if (c.style.width !== w || c.style.height !== h || c.style.transform !== t) {
         c.style.width = w;
         c.style.height = h;
+        c.style.transform = t;
     }
+    window.telaGirada = girar;
 }
 window.ajustarTela = ajustarTela;
 window.addEventListener("resize", ajustarTela);
