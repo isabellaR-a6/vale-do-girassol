@@ -5,9 +5,12 @@ import random
 
 from config import (ANIMAIS, ARQUIVO_SAVE, CANTEIROS_INICIAIS, CLIMA_POR_ESTACAO, CONSTRUCOES,
                     CULTURAS, DIAS_DO_ANO, DIAS_POR_ESTACAO, ENERGIA_BASE, ESTACOES, ITENS,
-                    NOME_CLIMA, RECEITAS, XP_NIVEIS, LOTES_POR_ACAO, WEB)
+                    NOME_CLIMA, RECEITAS, XP_NIVEIS, LOTES_POR_ACAO, WEB, ANDROID)
 
-CAMINHO_SAVE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ARQUIVO_SAVE)
+if ANDROID:  # pasta privada do app: não é apagada quando o APK é atualizado
+    CAMINHO_SAVE = os.path.join(os.environ.get("ANDROID_PRIVATE", "."), ARQUIVO_SAVE)
+else:
+    CAMINHO_SAVE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ARQUIVO_SAVE)
 CHAVE_WEB = "vale_do_girassol_save"  # no navegador o save fica no localStorage
 
 

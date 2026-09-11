@@ -138,6 +138,28 @@ Rode **dentro da pasta do projeto**, para ele ler o `pygbag.ini`. O `-X utf8` ev
 
 No celular: abra o link, **deite o celular** e toque na tela. Em pé aparece "Gire o celular".
 
+## 6b. App Android (APK) feito pelo GitHub
+
+Além do site, o GitHub gera um **app Android de verdade** (APK), que roda sem internet e em tela cheia.
+
+📦 **Download: https://github.com/isabellaR-a6/vale-do-girassol/releases/tag/apk**
+(o repositório é privado: no celular, entre na conta do GitHub antes de abrir o link)
+
+**Instalar:** baixe o `vale-do-girassol.apk`, abra o arquivo e permita **"instalar apps desconhecidos"** quando o
+Android pedir. O Play Protect pode avisar que o app é desconhecido; é normal (ele não está na Play Store), toque em
+"Instalar mesmo assim".
+
+**Como é gerado:** o fluxo `.github/workflows/apk.yml` roda sozinho a cada `git push` que muda o jogo
+(arquivos `.py`, `buildozer.spec`, ícone ou abertura). Leva uns **20–40 minutos** e publica o APK novo no mesmo link.
+Para gerar na mão: aba **Actions** do repositório → **APK Android** → **Run workflow**.
+
+- **Atualizar:** instale o APK novo por cima do antigo. O progresso fica guardado (a assinatura é sempre a mesma,
+  por causa do `android/debug.keystore`; não apague esse arquivo, senão o celular recusa a atualização).
+- **Receita:** `buildozer.spec` (nome, ícone, abertura, só deitado, Python 3.10 + pygame 2.1).
+  No Android o jogo já abre no modo celular (letra grande) e salva numa pasta própria do app.
+- **Se falhar:** aba Actions → clique no build com ❌ → abra o passo que falhou e leia o fim do log.
+- **Minutos:** repositório privado tem ~2000 minutos grátis de Actions por mês; cada APK gasta uns 30.
+
 ## 7. Onde mexer em cada coisa
 
 | Quero mudar... | Arquivo |

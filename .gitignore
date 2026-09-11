@@ -2,3 +2,6 @@ __pycache__/
 save_fazenda.json
 build/
 .claude/settings.local.json
+# gerados pelo Buildozer (APK)
+bin/
+.buildozer/

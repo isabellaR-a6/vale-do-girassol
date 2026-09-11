@@ -5,6 +5,9 @@ fonte bitmap e música chiptune **gerados em código** (sem imagens nem áudio e
 
 - **Repositório:** https://github.com/isabellaR-a6/vale-do-girassol (privado, branch `main`)
 - **Jogo publicado:** https://vale-do-girassol.netlify.app — o Netlify publica sozinho a cada `git push` no `main`
+- **APK Android:** gerado pelo GitHub Actions (`.github/workflows/apk.yml` + `buildozer.spec`, Python 3.10 + pygame 2.1
+  do python-for-android) e publicado na release `apk`. Assinado com `android/debug.keystore` (fixo, para atualizar por cima).
+  No Android: `config.ANDROID` é True, layout celular sempre, save em `$ANDROID_PRIVATE`, toque via clique do SDL.
 - **Guia humano:** `COMO_TRABALHAR.md` (instalar, rotina git, publicação). README tem o resumo.
 
 ## Decisões da dona do projeto (respeitar)

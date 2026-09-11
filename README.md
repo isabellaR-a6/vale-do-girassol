@@ -5,6 +5,8 @@ Nenhuma imagem ou som externo: sprites, fonte pixelada e efeitos 8-bit são gera
 
 > 🎮 **Jogar agora (celular ou PC):** https://vale-do-girassol.netlify.app — deite o celular e toque na tela.
 >
+> 📦 **App Android (APK):** https://github.com/isabellaR-a6/vale-do-girassol/releases/tag/apk — gerado sozinho pelo GitHub Actions.
+>
 > 💻 **Vai trabalhar de outro notebook?** Veja o passo a passo em [COMO_TRABALHAR.md](COMO_TRABALHAR.md)
 > (instalar, baixar do GitHub, rotina `git pull` / `git push` e publicação).
 

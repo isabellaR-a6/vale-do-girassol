@@ -1,8 +1,11 @@
 """Constantes, paleta de cores e dados do jogo (culturas, animais, construções)."""
+import os
 import sys
 
 # True quando o jogo roda no navegador (versão web gerada pelo pygbag)
 WEB = sys.platform == "emscripten"
+# True quando o jogo roda como app Android (APK gerado pelo Buildozer / python-for-android)
+ANDROID = "ANDROID_ARGUMENT" in os.environ
 
 # Resolução lógica (a janela é ampliada em pixels inteiros pelo pygame.SCALED)
 LARGURA, ALTURA = 640, 360

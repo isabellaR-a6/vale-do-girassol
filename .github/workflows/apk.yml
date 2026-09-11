@@ -1,0 +1,88 @@
+# Gera o APK Android do Vale do Girassol a cada envio que mexe no jogo
+# (ou na mão: aba Actions → "APK Android" → Run workflow).
+# O APK fica na release "apk": https://github.com/isabellaR-a6/vale-do-girassol/releases/tag/apk
+name: APK Android
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**.py"
+      - "buildozer.spec"
+      - "web/icone.png"
+      - "web/abertura.png"
+      - "android/**"
+      - ".github/workflows/apk.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write   # para publicar o APK na release
+
+concurrency:
+  group: apk
+  cancel-in-progress: true   # se enviar de novo no meio, cancela o build antigo
+
+jobs:
+  apk:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Programas que o Buildozer precisa
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git zip unzip autoconf automake libtool pkg-config \
+            zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          pip install --upgrade pip
+          pip install buildozer "cython<3" setuptools
+
+      - name: Cache do SDK/NDK do Android (deixa os próximos builds mais rápidos)
+        uses: actions/cache@v4
+        with:
+          path: ~/.buildozer
+          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
+          restore-keys: buildozer-global-
+
+      - name: Chave de assinatura fixa (o APK novo instala por cima do antigo sem perder o save)
+        run: |
+          mkdir -p ~/.android
+          cp android/debug.keystore ~/.android/debug.keystore
+
+      - name: Número da versão
+        run: sed -i "s/^version = .*/version = 1.0.${{ github.run_number }}/" buildozer.spec
+
+      - name: Gerar o APK
+        run: yes | buildozer -v android debug
+
+      - name: Renomear
+        run: cp bin/*.apk vale-do-girassol.apk
+
+      - name: Guardar o APK no build (aba Actions)
+        uses: actions/upload-artifact@v4
+        with:
+          name: vale-do-girassol-apk
+          path: vale-do-girassol.apk
+
+      - name: Publicar na release "apk"
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk
+          name: "Vale do Girassol — APK Android"
+          make_latest: true
+          body: |
+            🌻 APK mais recente do Vale do Girassol (versão 1.0.${{ github.run_number }}, commit ${{ github.sha }}).
+
+            **Instalar no celular Android:** baixe o `vale-do-girassol.apk` abaixo, abra o arquivo e permita
+            "instalar apps desconhecidos" quando o celular pedir. Para atualizar, instale o novo por cima:
+            o progresso é mantido.
+          files: vale-do-girassol.apk

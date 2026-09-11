@@ -14,7 +14,7 @@ import sys
 import pygame
 
 from cenario import Cenario
-from config import ALTURA, ARTE_A, ESCALA_ARTE, FPS, LARGURA, TITULO_JOGO, COR, WEB
+from config import ALTURA, ANDROID, ARTE_A, ESCALA_ARTE, FPS, LARGURA, TITULO_JOGO, COR, WEB
 from estado import Estado
 from fonte import FontePixel
 from historia import Historia
@@ -82,7 +82,7 @@ def estado_demo():
 
 def eh_celular():
     """Celular/tablet (tela de toque) usa o layout de letra grande. `--celular` força no PC, para testar."""
-    if "--celular" in sys.argv:
+    if "--celular" in sys.argv or ANDROID:
         return True
     if not WEB:
         return False
@@ -107,8 +107,14 @@ class Jogo:
     def __init__(self):
         pygame.mixer.pre_init(22050, -16, 1, 512)
         pygame.init()
-        # no navegador o próprio pygbag amplia a tela para caber na página
-        self.tela = pygame.display.set_mode((LARGURA, ALTURA), 0 if WEB else pygame.SCALED | pygame.RESIZABLE)
+        # no navegador o próprio pygbag amplia a tela; no Android ocupa a tela cheia (barras pretas se sobrar)
+        if WEB:
+            modo = 0
+        elif ANDROID:
+            modo = pygame.SCALED | pygame.FULLSCREEN
+        else:
+            modo = pygame.SCALED | pygame.RESIZABLE
+        self.tela = pygame.display.set_mode((LARGURA, ALTURA), modo)
         pygame.display.set_caption(TITULO_JOGO)
         pygame.display.set_icon(icone_janela())
         self.relogio = pygame.time.Clock()
@@ -192,6 +198,9 @@ class Jogo:
                     continue
                 if ev.type == pygame.QUIT:
                     self.sair()
+                if ev.type == getattr(pygame, "APP_WILLENTERBACKGROUND", -1) and self.ui.tela.local != "titulo":
+                    self.historia.e.salvar()  # celular: o sistema pode fechar o app em segundo plano
+                    continue
                 if ev.type == pygame.KEYDOWN and ev.key == pygame.K_F11:
                     pygame.display.toggle_fullscreen()
                     continue
@@ -216,10 +225,14 @@ class Jogo:
 
         No navegador, o SDL às vezes entrega o clique "de imitação" de um toque com a
         posição antiga do mouse; o evento FINGERDOWN traz a posição certa (de 0 a 1).
+        No app Android é o contrário: o FINGERDOWN conta a tela inteira (com as barras pretas),
+        e o clique de imitação já vem convertido para a tela do jogo. Lá usamos só o clique.
         """
         if ev.type == pygame.FINGERDOWN:
-            self.usou_toque = True
             self.ui.usar_layout(True)  # tocou na tela: é celular/tablet, usa letra e botões grandes
+            if not WEB:
+                return None
+            self.usou_toque = True
             pos = (int(ev.x * LARGURA), int(ev.y * ALTURA))
             self.ui.evento(pygame.event.Event(pygame.MOUSEMOTION, pos=pos))  # destaca a opção tocada
             return pygame.event.Event(pygame.MOUSEBUTTONDOWN, pos=pos, button=1)
