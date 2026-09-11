@@ -126,7 +126,7 @@ gera e publica a versão nova sozinho**, em 1–2 minutos. Nada de arrastar past
 ### Jeito manual
 
 ```bash
-python -X utf8 -m pygbag --build --archive --title "Vale do Girassol" .
+python -X utf8 -m pygbag --build --archive --title "Vale do Girassol" --template web/pagina.tmpl --icon web/icone.png .
 ```
 
 Isso cria `build/web` (arraste em https://app.netlify.com/drop) e `build/web.zip` (para o itch.io).

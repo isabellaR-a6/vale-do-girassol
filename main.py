@@ -2,7 +2,8 @@
 
 Rodar:  python main.py      (precisa do pygame:  pip install pygame)
 Versão web (celular/navegador), rodando DENTRO desta pasta (para ler o pygbag.ini):
-    python -X utf8 -m pygbag --build --archive --title "Vale do Girassol" .   -> build/web e build/web.zip
+    python -X utf8 -m pygbag --build --archive --title "Vale do Girassol" --template web/pagina.tmpl --icon web/icone.png .
+    -> build/web e build/web.zip  (web/pagina.tmpl é a página própria: tamanho certo no celular e pixels nítidos)
 Controles: mouse/toque, setas + ENTER/ESPAÇO, ou teclas 1-9.  F11 = tela cheia.  M = liga/desliga música.
 """
 import array

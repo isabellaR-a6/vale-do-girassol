@@ -1,7 +1,8 @@
 # Publicação automática: com o site do Netlify ligado a este repositório do GitHub,
 # cada "git push" gera a versão web com o pygbag e publica sozinho.
+# web/pagina.tmpl = página própria (tamanho certo no celular, pixels nítidos); web/icone.png = ícone.
 [build]
-  command = "pip install pygbag==0.9.3 && python -X utf8 -m pygbag --build --title \"Vale do Girassol\" ."
+  command = "pip install pygbag==0.9.3 && python -X utf8 -m pygbag --build --title \"Vale do Girassol\" --template web/pagina.tmpl --icon web/icone.png ."
   publish = "build/web"
 
 [build.environment]

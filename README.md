@@ -32,7 +32,7 @@ cada `git push` gera e publica a versão web sozinho (a receita está no `netlif
 **Gerar à mão** (rode *dentro* desta pasta, para ele ler o `pygbag.ini`, que deixa o save de fora):
 
 ```bash
-python -X utf8 -m pygbag --build --archive --title "Vale do Girassol" .
+python -X utf8 -m pygbag --build --archive --title "Vale do Girassol" --template web/pagina.tmpl --icon web/icone.png .
 ```
 
 Isso cria `build/web/` (o site) e `build/web.zip` (para o itch.io). O `-X utf8` é necessário no Windows por causa dos acentos.
