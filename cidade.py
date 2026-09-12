@@ -272,7 +272,7 @@ def pessoa(h, chave, msg=""):
     e = h.e
     d = PESSOAS[chave]
     linhas = [msg] if msg else []
-    linhas.append(f"{d['nome']} — {_cor(e, chave)}")
+    linhas.append(f"{d['nome']} · {_cor(e, chave)}")
     for tipo, verbo in (("adora", "Adora"), ("odeia", "Não suporta")):
         if e.sabe(chave, tipo):
             linhas.append(f"{verbo}: {nome_item(d[tipo])}.")

@@ -244,7 +244,7 @@ class Historia:
         e.gastar_energia()
         n = e.cuidar_abobora()
         return self.menu_fazenda(f"Você rega, tira o mato e vira a abóbora para pegar sol. "
-                                 f"{n}º dia de cuidado — já está com {e.peso_abobora()} kg!")
+                                 f"{n}º dia de cuidado: já está com {e.peso_abobora()} kg!")
 
     def menu_comer(self, msg=""):
         """Trocar comida por energia. Comer nao gasta acao, de proposito."""

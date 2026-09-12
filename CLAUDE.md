@@ -49,9 +49,11 @@ de passos pega erros de lógica. Aponte `estado.CAMINHO_SAVE` para um arquivo te
 
 ## Pegadinhas conhecidas
 
-- **A fonte só conhece 87 caracteres, e o que falta vira `?` sem avisar** (`fonte.py:168`).
-  Não tem travessão (`—`), reticências (`…`) nem meia-risca. Use `-`, `:` ou `·`.
-  Acentos do português têm; `⚡ ¢ ★ ♥` são ícones tratados à parte e funcionam.
+- **A fonte só conhece 87 caracteres mais 4 ícones (`¢ ♥ ★ ⚡`), e o que falta vira `?`
+  sem avisar** (`fonte.py:168`). Não tem travessão (`—`), reticências (`…`) nem meia-risca:
+  use `-`, `:` ou `·`. **Rode `python tools/checar_texto.py`** depois de mexer em texto —
+  ele varre as strings do jogo e acusa o que viraria interrogação. Esse erro já apareceu
+  três vezes, sempre porque o editor troca hífen por travessão sozinho.
 
 - Web: clique sem movimento prévio chega com posição velha; por isso o toque usa `FINGERDOWN` com coordenadas 0–1.
 - O `save_fazenda.json` (progresso) não vai para o git; cada computador tem o seu.
