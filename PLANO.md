@@ -144,7 +144,7 @@ um evento escrito), e no festival é pesada e disputa.
 É um objetivo com prazo que atravessa muitos dias: o "não posso dormir agora, a
 abóbora precisa de água".
 
-### O cachorro com função
+### O cachorro com função ✅ (12/09/2026)
 
 Existe e hoje é quase decoração. Carinho de manhã dá energia, ou acompanha na
 floresta e acha coisa, ou espanta a raposa.
@@ -164,7 +164,7 @@ viradas do ano. Primavera 112 bpm alegre, Verão 124 alegre, Outono 98 calmo,
 Inverno 82 ninar. **Ninguém ouviu ainda** — os números são plausíveis, mas se
 alguma estação soar errada é só mexer nessa tabela.
 
-### Mais animais
+### Mais animais ✅ (12/09/2026) — pato e cabra
 
 Cada um é uma entrada no `config.py` com preço, produto e casa. Encaixe rápido
 pra qualquer dia.

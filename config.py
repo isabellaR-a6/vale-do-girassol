@@ -84,6 +84,8 @@ CULTURAS = {
 # Animais: produto, a cada quantos dias produz, ração por dia, onde mora
 ANIMAIS = {
     "galinha": {"nome": "Galinha", "preco": 80,  "produto": "ovo",   "intervalo": 1, "racao": 1, "nivel": 1, "casa": "galinheiro"},
+    "pato":    {"nome": "Pato",    "preco": 110, "produto": "ovo",   "intervalo": 1, "racao": 1, "nivel": 1, "casa": "galinheiro"},
+    "cabra":   {"nome": "Cabra",   "preco": 200, "produto": "leite", "intervalo": 2, "racao": 1, "nivel": 2, "casa": "estabulo"},
     "porco":   {"nome": "Porco",   "preco": 250, "produto": "trufa", "intervalo": 2, "racao": 2, "nivel": 2, "casa": "estabulo"},
     "vaca":    {"nome": "Vaca",    "preco": 350, "produto": "leite", "intervalo": 1, "racao": 3, "nivel": 3, "casa": "estabulo"},
     "ovelha":  {"nome": "Ovelha",  "preco": 450, "produto": "la",    "intervalo": 2, "racao": 3, "nivel": 4, "casa": "estabulo"},
@@ -126,13 +128,13 @@ COMIDA = {
 # trocados a vontade: sao sabor, nao equilibrio. "cliente" liga a pessoa ao nome
 # que ela usa no quadro de pedidos (quem nao aparece la fica None).
 PESSOAS = {
-    "vovo":     {"nome": "Vovó Cida", "adora": "bolo", "odeia": "lambari", "cliente": None},
-    "ze":       {"nome": "Seu Zé", "adora": "queijo", "odeia": "geleia", "cliente": "Seu Zé"},
-    "lucia":    {"nome": "Dona Lúcia", "adora": "morango", "odeia": "cogumelo", "cliente": "Dona Lúcia"},
-    "rosa":     {"nome": "Rosa", "adora": "trufa", "odeia": "bolo", "cliente": "Rosa"},
-    "bia":      {"nome": "Bia", "adora": "geleia", "odeia": "abobora", "cliente": "Bia"},
-    "prefeito": {"nome": "Prefeito Otávio", "adora": "pao", "odeia": "milho", "cliente": "o Prefeito"},
-    "viajante": {"nome": "O viajante", "adora": "peixe_dourado", "odeia": "trigo", "cliente": None},
+    "vovo":     {"nome": "Vovó Cida", "adora": "bolo", "odeia": "lambari", "cliente": None, "aniversario": 4},
+    "ze":       {"nome": "Seu Zé", "adora": "queijo", "odeia": "geleia", "cliente": "Seu Zé", "aniversario": 9},
+    "lucia":    {"nome": "Dona Lúcia", "adora": "morango", "odeia": "cogumelo", "cliente": "Dona Lúcia", "aniversario": 13},
+    "rosa":     {"nome": "Rosa", "adora": "trufa", "odeia": "bolo", "cliente": "Rosa", "aniversario": 17},
+    "bia":      {"nome": "Bia", "adora": "geleia", "odeia": "abobora", "cliente": "Bia", "aniversario": 21},
+    "prefeito": {"nome": "Prefeito Otávio", "adora": "pao", "odeia": "milho", "cliente": "o Prefeito", "aniversario": 25},
+    "viajante": {"nome": "O viajante", "adora": "peixe_dourado", "odeia": "trigo", "cliente": None, "aniversario": 27},
 }
 PONTOS_POR_CORACAO = 10
 CORACOES_MAX = 5

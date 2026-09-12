@@ -137,6 +137,29 @@ def viajante(h, local):
                 ], retrato="viajante", titulo="Viajante misterioso", local=local)
 
 
+# ---------------------------------------------------------------- o cachorro
+ACHADOS_CAO = [("amora", "chega abanando o rabo com uma amora na boca"),
+               ("cogumelo", "aparece todo sujo de terra, com um cogumelo entre os dentes"),
+               ("lambari", "volta pingando do córrego, com um lambari"),
+               ("trufa", "cava feito doido embaixo da árvore e desenterra uma trufa!")]
+
+
+def carinho(h):
+    """Um carinho por dia. Não custa energia: é afago, não tarefa."""
+    e = h.e
+    e.flags["carinho"] = e.dia
+    nome = e.cachorro
+    if random.random() < 0.35:
+        item, conta = random.choice(ACHADOS_CAO)
+        e.adicionar(item, 1)
+        msg = h.xp(3, f"{nome} {conta}. Presente para você! (+1 {nome_item(item)}, +★3)")
+    else:
+        msg = h.xp(2, f"{nome} se joga de barriga para cima e fica de perna bamba. "
+                      f"O dia melhora um pouquinho. (+★2)")
+    return Tela(msg, [Opcao("Voltar para a fazenda", h.menu_fazenda)],
+                retrato="cachorro", titulo=nome, local="fazenda")
+
+
 # ---------------------------------------------------------------- lago
 def lago(h):
     gelo = h.e.estacao == "Inverno"
@@ -272,7 +295,7 @@ def da_manha(h):
     if e.dia < 3 or random.random() > 0.45:
         return None
     possiveis = ["limonada", "lucia", "estrelas"]
-    galinhas = [a for a in e.animais if a["tipo"] == "galinha"]
+    galinhas = [a for a in e.animais if a["tipo"] in ("galinha", "pato")]
     if galinhas and not e.cachorro:
         possiveis += ["raposa", "raposa"]
     if e.clima == "tempestade" and any(c["cultura"] and not c["morto"] for c in e.canteiros):
@@ -298,7 +321,7 @@ def _raposa(h):
         return voltar(h, "Você reforça a cerca do galinheiro. Nenhuma raposa passa por ali hoje!")
 
     def ignorar():
-        galinhas = [a for a in e.animais if a["tipo"] == "galinha"]
+        galinhas = [a for a in e.animais if a["tipo"] in ("galinha", "pato")]
         if galinhas and random.random() < 0.4:
             vitima = random.choice(galinhas)
             e.animais.remove(vitima)

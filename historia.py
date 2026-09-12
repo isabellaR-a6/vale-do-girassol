@@ -215,6 +215,9 @@ class Historia:
             Opcao("Usar as oficinas", self.menu_oficinas, ativa=bool(e.receitas_disponiveis()),
                   dica="" if e.receitas_disponiveis() else "construa uma"),
             Opcao("Espiar o celeiro", self.ver_celeiro),
+            Opcao(f"Fazer carinho em {e.cachorro}" if e.cachorro else "Fazer carinho no cachorro",
+                  lambda: eventos.carinho(self), ativa=bool(e.cachorro) and e.flags.get("carinho") != e.dia,
+                  dica=("já fez hoje" if e.flags.get("carinho") == e.dia else "de graça") if e.cachorro else "você não tem um"),
             Opcao("Comer alguma coisa", self.menu_comer,
                   ativa=bool(e.comidas_no_celeiro()) and e.energia < e.energia_max,
                   dica=("celeiro vazio" if not e.comidas_no_celeiro()
@@ -458,7 +461,10 @@ class Historia:
                   + (" As plantações já amanheceram regadas." if e.clima in ("chuva", "tempestade") else "")]
 
         aviso = ""
-        if e.dia_da_estacao == 1:
+        festeiro = e.aniversariante()
+        if festeiro:
+            aviso = f"Hoje é aniversário de {PESSOAS[festeiro]['nome']}! Presente hoje vale em dobro."
+        elif e.dia_da_estacao == 1:
             # "a Primavera", "o Verão": o estado.py já tratava isso, e o jornal
             # repetia o erro que ela tinha consertado
             artigo = "a" if e.estacao == "Primavera" else "o"

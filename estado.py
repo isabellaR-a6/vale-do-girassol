@@ -118,6 +118,13 @@ class Estado:
             return True
         return False
 
+    def aniversariante(self):
+        """Quem faz aniversário hoje (chave), ou None. A data é o dia do ano."""
+        for chave, d in PESSOAS.items():
+            if d.get("aniversario") == self.dia_do_ano:
+                return chave
+        return None
+
     def pessoa_do_cliente(self, cliente):
         for chave, d in PESSOAS.items():
             if d["cliente"] == cliente:

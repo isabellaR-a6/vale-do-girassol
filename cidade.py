@@ -246,8 +246,9 @@ def gente(h, msg=""):
     ops = []
     for chave, d in PESSOAS.items():
         visto = e.ja_viu_hoje(chave)
+        festa = " ANIVERSÁRIO!" if e.aniversariante() == chave else ""
         ops.append(Opcao(d["nome"], lambda c=chave: pessoa(h, c),
-                         dica=_cor(e, chave) + ("  (já hoje)" if visto else "")))
+                         dica=_cor(e, chave) + festa + ("  (já hoje)" if visto else "")))
     ops.append(Opcao("Voltar para a praça", lambda: praca(h)))
     texto = ((msg + NL if msg else "")
              + "A praça é o ponto de encontro do vale. Conversar não custa nada, e é conversando "
@@ -317,6 +318,12 @@ def _dar(h, chave, item):
         e.descobrir(chave, "odeia")
     else:
         pontos, reacao = 3, "Um agrado sempre é bem-vindo."
+    # presente no dia do aniversário vale o dobro (menos o que a pessoa odeia:
+    # errar o presente justo hoje não devia render dobro de estrago)
+    festa = e.aniversariante() == chave
+    if festa and pontos > 0:
+        pontos *= 2
+        reacao += " E hoje é aniversário: você lembrou!"
     subiu = e.mudar_amizade(chave, pontos)
     msg = f"Você dá {nome_item(item)}. {reacao} ({_cor(e, chave)})"
     if subiu:
