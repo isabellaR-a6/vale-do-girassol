@@ -5,7 +5,7 @@ import random
 import sys
 
 from config import (ANIMAIS, ARQUIVO_SAVE, CANTEIROS_INICIAIS, CLIMA_POR_ESTACAO, CONSTRUCOES,
-                    COMIDA, CULTURAS, DIAS_DO_ANO, DIAS_POR_ESTACAO, ENERGIA_BASE, ESTACOES, ITENS,
+                    COMIDA, CORACOES_MAX, CULTURAS, DIAS_DO_ANO, DIAS_POR_ESTACAO, ENERGIA_BASE, ESTACOES, ITENS, PESSOAS, PONTOS_POR_CORACAO,
                     NOME_CLIMA, RECEITAS, XP_NIVEIS, LOTES_POR_ACAO, WEB, ANDROID)
 
 if ANDROID:  # pasta privada do app: não é apagada quando o APK é atualizado
@@ -52,6 +52,9 @@ class Estado:
         self.anos = []            # placar de cada ano: {ano, pontos, titulo}
         self.genero = "f"         # "f" ou "m": muda como a vila te chama
         self.aparencia = {}       # escolhas do retrato; sprites.APARENCIA_PADRAO preenche o resto
+        self.amizade = {}         # chave da pessoa -> pontos
+        self.visto_hoje = {}      # chave -> dia em que voce ja conversou/presenteou
+        self.sabidos = []         # "chave:adora" / "chave:odeia" ja descobertos
         self.sortear_precos()
         self.gerar_pedidos()
 
@@ -87,6 +90,39 @@ class Estado:
             return 1, 1
         base, prox = XP_NIVEIS[n - 1], XP_NIVEIS[n]
         return self.xp - base, prox - base
+
+    # ------------------------------------------------------------ gente do vale
+    def coracoes(self, chave):
+        return min(CORACOES_MAX, self.amizade.get(chave, 0) // PONTOS_POR_CORACAO)
+
+    def mudar_amizade(self, chave, n):
+        """Soma (ou tira) pontos de amizade e diz se ganhou um coração novo."""
+        antes = self.coracoes(chave)
+        teto = CORACOES_MAX * PONTOS_POR_CORACAO
+        self.amizade[chave] = max(0, min(teto, self.amizade.get(chave, 0) + n))
+        return self.coracoes(chave) > antes
+
+    def ja_viu_hoje(self, chave):
+        """Uma conversa e um presente por pessoa por dia: senao vira moedinha."""
+        return self.visto_hoje.get(chave) == self.dia
+
+    def marcar_visita(self, chave):
+        self.visto_hoje[chave] = self.dia
+
+    def sabe(self, chave, tipo):
+        return f"{chave}:{tipo}" in self.sabidos
+
+    def descobrir(self, chave, tipo):
+        if not self.sabe(chave, tipo):
+            self.sabidos.append(f"{chave}:{tipo}")
+            return True
+        return False
+
+    def pessoa_do_cliente(self, cliente):
+        for chave, d in PESSOAS.items():
+            if d["cliente"] == cliente:
+                return chave
+        return None
 
     @property
     def tratamento(self):

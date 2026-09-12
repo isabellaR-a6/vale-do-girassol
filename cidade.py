@@ -1,9 +1,11 @@
 """A cidade do vale: mercado, feira de animais, carpintaria, pedidos e café."""
 import random
 
-from config import (ANIMAIS, CANTEIROS_MAX, CONSTRUCOES, PACOTE_RACAO, canteiro_preco)
+from config import (ANIMAIS, CANTEIROS_MAX, CONSTRUCOES, PACOTE_RACAO, PESSOAS, canteiro_preco)
 from estado import nome_item
 from tela import Opcao, Tela
+
+NL = chr(10)
 
 DICAS_CAFE = [
     "dizem que geleia de morango vale uma fortuna no mercado.",
@@ -30,6 +32,8 @@ def praca(h, msg=""):
               dica=f"{sum(1 for p in e.pedidos if e.pode_entregar(p))} prontos"),
         Opcao("Café da praça", lambda: cafe(h), ativa=e.flags.get("cafe") != e.dia and e.dinheiro >= 15,
               dica="¢15" if e.flags.get("cafe") != e.dia else "já tomou hoje"),
+        Opcao("Conversar com alguém", lambda: gente(h),
+              dica=f"{sum(1 for k in PESSOAS if not e.ja_viu_hoje(k))} sem ver hoje"),
         Opcao("Voltar para a fazenda", h.menu_fazenda),
     ]
     return Tela(texto, ops, titulo="Praça da cidade", local="cidade")
@@ -193,8 +197,19 @@ def pedidos(h, msg=""):
 
 
 def entregar(h, i):
-    p = h.e.entregar(i)
-    return pedidos(h, h.xp(p["xp"], f"{p['cliente'].capitalize()} adorou! Você recebeu ¢{p['moedas']} e ★{p['xp']}. (+1 ♥)"))
+    e = h.e
+    p = e.entregar(i)
+    extra = ""
+    # quem pediu fica seu amigo: o quadro de pedidos ja tinha um "cliente",
+    # so nao valia nada para a amizade
+    chave = e.pessoa_do_cliente(p["cliente"])
+    if chave:
+        if e.mudar_amizade(chave, 4):
+            extra = f" Vocês ficaram mais próximos! ({_cor(e, chave)})"
+        else:
+            extra = f" ({_cor(e, chave)})"
+    return pedidos(h, h.xp(p["xp"], f"{p['cliente'].capitalize()} adorou! Você recebeu "
+                                    f"¢{p['moedas']} e ★{p['xp']}.{extra}"))
 
 
 def rasgar(h):
@@ -217,3 +232,93 @@ def cafe(h):
     e.energia = min(e.energia_max, e.energia + 1)
     return praca(h, f"Você tomou um cafezinho com pão de queijo (+⚡1). Na mesa ao lado, alguém comenta: "
                     f"\"{random.choice(DICAS_CAFE)}\"")
+
+
+# ---------------------------------------------------------------- gente do vale
+def _cor(e, chave):
+    cheios = e.coracoes(chave)
+    return "♥" * cheios + "·" * (5 - cheios)
+
+
+def gente(h, msg=""):
+    """Quem está na praça hoje. Conversar é de graça; presente é que pesa."""
+    e = h.e
+    ops = []
+    for chave, d in PESSOAS.items():
+        visto = e.ja_viu_hoje(chave)
+        ops.append(Opcao(d["nome"], lambda c=chave: pessoa(h, c),
+                         dica=_cor(e, chave) + ("  (já hoje)" if visto else "")))
+    ops.append(Opcao("Voltar para a praça", lambda: praca(h)))
+    texto = ((msg + NL if msg else "")
+             + "A praça é o ponto de encontro do vale. Conversar não custa nada, e é conversando "
+               "que você descobre do que cada um gosta.")
+    return Tela(texto, ops, titulo="Gente do vale", local="cidade")
+
+
+def pessoa(h, chave, msg=""):
+    e = h.e
+    d = PESSOAS[chave]
+    linhas = [msg] if msg else []
+    linhas.append(f"{d['nome']} — {_cor(e, chave)}")
+    for tipo, verbo in (("adora", "Adora"), ("odeia", "Não suporta")):
+        if e.sabe(chave, tipo):
+            linhas.append(f"{verbo}: {nome_item(d[tipo])}.")
+    if not e.sabe(chave, "adora") and not e.sabe(chave, "odeia"):
+        linhas.append("Você ainda não sabe do que essa pessoa gosta.")
+    ja = e.ja_viu_hoje(chave)
+    ops = [
+        Opcao("Conversar", lambda: conversar(h, chave), ativa=not ja,
+              dica="já conversaram hoje" if ja else "+♥"),
+        Opcao("Dar um presente", lambda: presentear(h, chave), ativa=not ja and bool(e.celeiro),
+              dica="celeiro vazio" if not e.celeiro else ("já foi hoje" if ja else "")),
+        Opcao("Voltar", lambda: gente(h)),
+    ]
+    return Tela(NL.join(linhas), ops, titulo=d["nome"], local="cidade", retrato=chave)
+
+
+def conversar(h, chave):
+    e = h.e
+    d = PESSOAS[chave]
+    e.marcar_visita(chave)
+    subiu = e.mudar_amizade(chave, 2)
+    # conversar é também como se descobre o gosto: primeiro o que a pessoa ama
+    revelou = ""
+    for tipo, frase in (("adora", "comenta que adora {}"), ("odeia", "faz careta e diz que detesta {}")):
+        if e.descobrir(chave, tipo):
+            revelou = " " + d["nome"] + " " + frase.format(nome_item(d[tipo])) + "."
+            break
+    msg = f"Vocês conversam um pouco.{revelou}"
+    if subiu:
+        msg += f" Vocês ficaram mais próximos! ({_cor(e, chave)})"
+    return pessoa(h, chave, msg)
+
+
+def presentear(h, chave):
+    e = h.e
+    ops = [Opcao(f"{nome_item(i)} ({n})", lambda x=i: _dar(h, chave, x),
+                 dica=f"vale ¢{e.preco(i)}", icone=i)
+           for i, n in sorted(e.celeiro.items())]
+    ops.append(Opcao("Melhor não", lambda: pessoa(h, chave)))
+    return Tela("O que você tira da cesta?", ops,
+                titulo=f"Presente para {PESSOAS[chave]['nome']}", local="cidade",
+                retrato=chave, painel="celeiro")
+
+
+def _dar(h, chave, item):
+    e = h.e
+    d = PESSOAS[chave]
+    e.remover(item, 1)
+    e.marcar_visita(chave)
+    if item == d["adora"]:
+        pontos, reacao = 8, "Os olhos brilham! Era exatamente isso que faltava."
+        e.descobrir(chave, "adora")
+    elif item == d["odeia"]:
+        pontos, reacao = -5, "O sorriso some na hora. Não era uma boa ideia..."
+        e.descobrir(chave, "odeia")
+    else:
+        pontos, reacao = 3, "Um agrado sempre é bem-vindo."
+    subiu = e.mudar_amizade(chave, pontos)
+    msg = f"Você dá {nome_item(item)}. {reacao} ({_cor(e, chave)})"
+    if subiu:
+        msg += " Vocês ficaram mais próximos!"
+    return pessoa(h, chave, msg)

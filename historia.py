@@ -4,7 +4,9 @@ import random
 import cidade
 import eventos
 import sprites
-from config import ANIMAIS, COMIDA, CULTURAS, RECEITAS, WEB
+
+NL_JORNAL = chr(10)
+from config import ANIMAIS, COMIDA, CULTURAS, PESSOAS, RECEITAS, WEB
 from estado import Estado, nome_item
 from tela import Opcao, Tela
 
@@ -441,11 +443,63 @@ class Historia:
         return Tela(texto, [Opcao("Acordar", self.amanhecer)], local="noite", titulo="Noite", som="noite")
 
     def amanhecer(self):
+        return self.jornal()
+
+    def jornal(self):
+        """O jornalzinho do vale, antes do dia começar.
+
+        Junta num lugar só o que estava espalhado ou escondido: o tempo de hoje,
+        um aviso do que vem por aí, e a coluna de fofoca — que é como o jogador
+        descobre do que cada pessoa gosta sem precisar errar presente.
+        """
+        e = self.e
+        linhas = [f"GAZETA DO VALE · Ano {e.ano} · {e.estacao} {e.dia_da_estacao}/7",
+                  f"Tempo de hoje: {e.nome_clima.lower()}."
+                  + (" As plantações já amanheceram regadas." if e.clima in ("chuva", "tempestade") else "")]
+
+        aviso = ""
+        if e.dia_da_estacao == 1:
+            # "a Primavera", "o Verão": o estado.py já tratava isso, e o jornal
+            # repetia o erro que ela tinha consertado
+            artigo = "a" if e.estacao == "Primavera" else "o"
+            aviso = f"Começou {artigo} {e.estacao} no vale!"
+        elif e.dia_do_ano >= 26:
+            aviso = "O Concurso da Fazenda do Ano está chegando. Capriche!"
+        else:
+            prontos = sum(1 for p in e.pedidos if e.pode_entregar(p))
+            if prontos:
+                aviso = f"O quadro de pedidos tem {prontos} pedido(s) que você já consegue entregar."
+        if aviso:
+            linhas.append("AVISOS: " + aviso)
+
+        linhas.append("FOFOCA: " + self._fofoca())
+        return Tela(NL_JORNAL.join(linhas), [Opcao("Começar o dia", self.depois_do_jornal)],
+                    titulo="Gazeta do Vale", local="fazenda")
+
+    def _fofoca(self):
+        """Revela um gosto por dia, para presentear não virar tentativa e erro."""
+        e = self.e
+        faltam = [(c, tipo) for c in PESSOAS for tipo in ("adora", "odeia") if not e.sabe(c, tipo)]
+        if faltam:
+            chave, tipo = random.choice(faltam)
+            e.descobrir(chave, tipo)
+            d = PESSOAS[chave]
+            item = nome_item(d[tipo])
+            if tipo == "adora":
+                return f"dizem por aí que {d['nome']} não resiste a {item}."
+            return f"contam que {d['nome']} torce o nariz para {item}."
+        melhor = max(PESSOAS, key=lambda c: e.amizade.get(c, 0))
+        if e.amizade.get(melhor):
+            return f"{PESSOAS[melhor]['nome']} anda falando muito bem de você pela praça."
+        return "nada de novo por aqui. O vale está quieto."
+
+    def depois_do_jornal(self):
         evento = eventos.da_manha(self)
         if evento:
             return evento
         e = self.e
-        return self.menu_fazenda(f"Bom dia! Ano {e.ano}, {e.estacao} {e.dia_da_estacao}/7. O tempo está: {e.nome_clima.lower()}.")
+        return self.menu_fazenda(f"Bom dia! Ano {e.ano}, {e.estacao} {e.dia_da_estacao}/7. "
+                                 f"O tempo está: {e.nome_clima.lower()}.")
 
     def final_ano(self):
         """O Concurso da Fazenda do Ano, agora todo fim de ano.

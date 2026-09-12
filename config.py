@@ -116,6 +116,21 @@ COMIDA = {
     "bolo": 3,
 }
 
+# Quem mora no vale. "adora" e "odeia" sao chutes de personalidade e podem ser
+# trocados a vontade: sao sabor, nao equilibrio. "cliente" liga a pessoa ao nome
+# que ela usa no quadro de pedidos (quem nao aparece la fica None).
+PESSOAS = {
+    "vovo":     {"nome": "Vovó Cida", "adora": "bolo", "odeia": "lambari", "cliente": None},
+    "ze":       {"nome": "Seu Zé", "adora": "queijo", "odeia": "geleia", "cliente": "Seu Zé"},
+    "lucia":    {"nome": "Dona Lúcia", "adora": "morango", "odeia": "cogumelo", "cliente": "Dona Lúcia"},
+    "rosa":     {"nome": "Rosa", "adora": "trufa", "odeia": "bolo", "cliente": "Rosa"},
+    "bia":      {"nome": "Bia", "adora": "geleia", "odeia": "abobora", "cliente": "Bia"},
+    "prefeito": {"nome": "Prefeito Otávio", "adora": "pao", "odeia": "milho", "cliente": "o Prefeito"},
+    "viajante": {"nome": "O viajante", "adora": "peixe_dourado", "odeia": "trigo", "cliente": None},
+}
+PONTOS_POR_CORACAO = 10
+CORACOES_MAX = 5
+
 CONSTRUCOES = {
     "galinheiro_grande": {"nome": "Galinheiro ampliado", "preco": 250, "nivel": 2,
                           "desc": "Cabem 5 galinhas em vez de 2."},

@@ -80,7 +80,7 @@ logo depois de escolher o nome), `estado.py` (guardar a aparência).
 
 ## A fila — depois, em cima de um jogo onde já dá pra respirar
 
-### Amizade por pessoa (a de maior retorno)
+### Amizade por pessoa ✅ (12/09/2026)
 
 Hoje existe **uma** `reputacao` global. Mas o jogo tem **sete personagens com
 retrato**: Vovó Cida, Zé, Lúcia, Rosa, o viajante, o Prefeito Otávio e a Bia.
@@ -97,7 +97,7 @@ retrato**: Vovó Cida, Zé, Lúcia, Rosa, o viajante, o Prefeito Otávio e a Bia
 
 Efeito: os itens ganham um terceiro uso. Vender, comer e **presentear**.
 
-### O jornal da cidade (de manhã)
+### O jornal da cidade ✅ (12/09/2026) — a Gazeta do Vale
 
 Substitui a ideia de "carta". Uma tela só, de manhã, com:
 - **Coluna de fofoca** — é daqui que saem as dicas de gosto dos personagens.
