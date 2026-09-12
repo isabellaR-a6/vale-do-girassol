@@ -176,6 +176,59 @@ RETRATOS = {
 }
 
 
+# ------------------------------------------------ o retrato de quem está jogando
+# As opções que a tela de criação oferece. Cada lista é (chave, nome que aparece).
+PELES = [("clara", COR["pele"]), ("morena", (225, 175, 140)),
+         ("parda", (200, 150, 115)), ("negra", COR["pele_esc"]), ("retinta", (120, 80, 55))]
+CABELOS = [("preto", (45, 32, 30)), ("castanho", COR["madeira"]), ("loiro", COR["madeira_clara"]),
+           ("ruivo", COR["laranja"]), ("grisalho", CINZA_CLARO), ("rosa", COR["rosa"]),
+           ("roxo", COR["roxo_claro"]), ("azul", COR["agua_clara"])]
+ESTILOS_CABELO = [("curto", "curto"), ("longo", "comprido"), ("coque", "coque"), ("careca", "raspado")]
+ROUPAS = [("verde", COR["verde_ui"]), ("azul", COR["azul"]), ("vermelha", COR["vermelho_claro"]),
+          ("amarela", COR["dourado"]), ("roxa", COR["roxo"]), ("rosa", COR["rosa"]),
+          ("branca", COR["creme"]), ("marrom", COR["madeira"])]
+CHAPEUS = [("nenhum", None), ("palha", "palha"), ("bandana", "bandana")]
+
+APARENCIA_PADRAO = {"pele": "clara", "cabelo": "castanho", "estilo": "longo",
+                    "roupa": "verde", "chapeu": "nenhum", "oculos": False}
+
+
+def _escolha(lista, chave, reserva=0):
+    for k, v in lista:
+        if k == chave:
+            return v
+    return lista[reserva][1]
+
+
+def definir_jogador(ap):
+    """Monta o retrato de quem está jogando a partir das escolhas dela.
+
+    O retrato de cada personagem nasce de atributos, não de um desenho pronto —
+    era só o jogador que não tinha um. O cache é por chave, então precisa cair
+    quando a aparência muda, senão a tela mostra o rosto antigo.
+    """
+    ap = {**APARENCIA_PADRAO, **(ap or {})}
+    RETRATOS["jogador"] = {
+        "pele": _escolha(PELES, ap["pele"]),
+        "cabelo": _escolha(CABELOS, ap["cabelo"], 1),
+        "estilo": ap["estilo"] if ap["estilo"] in ("curto", "longo", "coque", "careca") else "curto",
+        "roupa": _escolha(ROUPAS, ap["roupa"]),
+        "fundo": COR["ceu_claro"],
+        "oculos": bool(ap.get("oculos")),
+    }
+    chapeu = _escolha(CHAPEUS, ap.get("chapeu", "nenhum"))
+    if chapeu:
+        RETRATOS["jogador"]["chapeu"] = chapeu
+    for k in [c for c in _cache if c[0] == "retrato" and c[1] == "jogador"]:
+        del _cache[k]
+
+
+def cores_do_jogador(ap):
+    """As três cores do bonequinho de corpo inteiro (cabelo, roupa, calça)."""
+    ap = {**APARENCIA_PADRAO, **(ap or {})}
+    return (_escolha(CABELOS, ap["cabelo"], 1), _escolha(ROUPAS, ap["roupa"]), COR["madeira_esc"])
+
+
 def retrato(chave, escala=3):
     if chave == "cachorro":
         base = pygame.Surface((16, 16))

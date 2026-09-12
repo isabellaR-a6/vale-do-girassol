@@ -3,6 +3,7 @@ import random
 
 import cidade
 import eventos
+import sprites
 from config import ANIMAIS, COMIDA, CULTURAS, RECEITAS, WEB
 from estado import Estado, nome_item
 from tela import Opcao, Tela
@@ -47,11 +48,13 @@ class Historia:
             "ou as teclas 1 a 9; M liga/desliga a música). Cada dia você tem ⚡ energia para fazer coisas: plantar, regar, colher, cuidar "
             "dos animais, ir à cidade, explorar... Quando a energia acaba, é hora de dormir.\n"
             "Plantas só crescem se forem regadas (ou se chover). Animais só produzem se forem alimentados. "
-            "Venda no mercado, cumpra pedidos e construa melhorias. Em 28 dias (1 ano) a vila avalia a sua fazenda!",
+            "Venda no mercado, cumpra pedidos e construa melhorias. A cada 28 dias (1 ano) a vila avalia a sua "
+            "fazenda no Concurso, e aí começa um ano novo: dá para tentar bater a sua própria marca!",
             [Opcao("Entendi!", self.titulo)], local="titulo", titulo="Como jogar")
 
     def continuar(self):
         self.e = Estado.carregar()
+        sprites.definir_jogador(self.e.aparencia)   # o rosto dela volta com o save
         return self.menu_fazenda("Bem-vindo(a) de volta ao Vale do Girassol!")
 
     def novo_jogo(self):
@@ -67,7 +70,76 @@ class Historia:
             "na praia. Deixo para você a Fazenda Girassol: um celeiro velho, um galinheiro, quatro canteiros "
             "e ¢500 guardados na lata de biscoito. A terra é boa e os vizinhos também. "
             "Daqui a um ano a vila faz o Concurso da Fazenda do Ano... quem sabe? Com amor, Vovó Cida.\"",
-            [Opcao("Arrumar a mala", self.mala)], titulo="Carta da Vovó Cida", retrato="vovo", local="titulo")
+            [Opcao("Se arrumar para a viagem", self.criar_pessoa)],
+            titulo="Carta da Vovó Cida", retrato="vovo", local="titulo")
+
+    # ------------------------------------------------------------ quem é você
+    def _ap(self, campo, valor, proxima):
+        """Guarda uma escolha da aparência e redesenha o retrato na hora."""
+        self.e.aparencia[campo] = valor
+        sprites.definir_jogador(self.e.aparencia)
+        return proxima()
+
+    def _tela_ap(self, texto, campo, lista, proxima, titulo):
+        # a chave de cada opção já é a palavra que aparece na tela ("loiro",
+        # "coque", "bandana"); o segundo item da lista é a cor, não um rótulo
+        ops = [Opcao(chave.capitalize(), lambda c=chave: self._ap(campo, c, proxima))
+               for chave, _ in lista]
+        return Tela(texto, ops, titulo=titulo, retrato="jogador", local="titulo")
+
+    def criar_pessoa(self):
+        sprites.definir_jogador(self.e.aparencia)
+        texto = chr(10).join(["Antes de pegar a estrada, você se arruma no espelho rachado do quarto.",
+                              "Como a vila vai te conhecer?"])
+        return Tela(texto,
+                    [Opcao("Sou uma menina", lambda: self._genero("f")),
+                     Opcao("Sou um menino", lambda: self._genero("m"))],
+                    titulo="No espelho", retrato="jogador", local="titulo")
+
+    def _genero(self, g):
+        self.e.genero = g
+        if not self.e.aparencia.get("estilo"):
+            self.e.aparencia["estilo"] = "longo" if g == "f" else "curto"
+        sprites.definir_jogador(self.e.aparencia)
+        return self.escolher_pele()
+
+    def escolher_pele(self):
+        return self._tela_ap("Sua pele pega sol o dia inteiro na roça.", "pele",
+                             sprites.PELES, self.escolher_estilo, "Tom de pele")
+
+    def escolher_estilo(self):
+        return self._tela_ap("E o cabelo, como fica bom em você?", "estilo",
+                             sprites.ESTILOS_CABELO, self.escolher_cabelo, "Cabelo")
+
+    def escolher_cabelo(self):
+        return self._tela_ap("De que cor?", "cabelo",
+                             sprites.CABELOS, self.escolher_roupa, "Cor do cabelo")
+
+    def escolher_roupa(self):
+        return self._tela_ap("Uma roupa boa de trabalhar, que não tenha dó de sujar.", "roupa",
+                             sprites.ROUPAS, self.escolher_chapeu, "Roupa")
+
+    def escolher_chapeu(self):
+        return self._tela_ap("Alguma coisa na cabeça? O sol do vale não perdoa.", "chapeu",
+                             sprites.CHAPEUS, self.escolher_oculos, "Chapéu")
+
+    def escolher_oculos(self):
+        e = self.e
+        return Tela("Óculos?", [
+            Opcao("Uso óculos", lambda: self._ap("oculos", True, self.confirmar_pessoa)),
+            Opcao("Não uso", lambda: self._ap("oculos", False, self.confirmar_pessoa)),
+        ], titulo="Óculos", retrato="jogador", local="titulo")
+
+    def confirmar_pessoa(self):
+        e = self.e
+        # concorda com a escolha de menina/menino: escrever "mesma" fixo
+        # contradiz o jogador que acabou de dizer que e menino
+        texto = chr(10).join([f"É você mesm{'a' if e.genero == 'f' else 'o'} no espelho?",
+                              f"{e.tratamento} {e.nome}, do Vale do Girassol."])
+        return Tela(texto,
+                    [Opcao("É essa pessoa que eu sou", self.mala),
+                     Opcao("Quero mudar alguma coisa", self.criar_pessoa)],
+                    titulo="No espelho", retrato="jogador", local="titulo")
 
     def mala(self):
         def escolher(tipo):
@@ -141,7 +213,7 @@ class Historia:
             Opcao("Dormir até amanhã", self.dormir, dica="fim do dia"),
             Opcao("Salvar e ir ao título", self.salvar_sair),
         ]
-        return Tela(texto, ops, titulo=f"Fazenda Girassol · {e.nome}", som="")
+        return Tela(texto, ops, titulo=f"Fazenda Girassol · {e.nome}", som="", retrato="jogador")
 
     def ver_celeiro(self):
         e = self.e
@@ -400,7 +472,7 @@ class Historia:
         e.salvar()   # grava ja: sair no meio da festa nao pode apagar o ano
 
         linhas = [f"Prefeito Otávio: \"Atenção, vale! O resultado do Concurso da Fazenda do Ano...\"",
-                  f"Ano {que_acabou} de {e.nome}: {pat} pontos (patrimônio, amizade e experiência).",
+                  f"Ano {que_acabou} d{'a' if e.genero == 'f' else 'o'} {e.tratamento} {e.nome}: "f"{pat} pontos (patrimônio, amizade e experiência).",
                   f"Título: {titulo}! {fala}"]
         if anterior is not None:
             dif = pat - anterior

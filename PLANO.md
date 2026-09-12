@@ -29,10 +29,12 @@ ovelha, o queijo e a geleia provavelmente nenhum jogador vê.
 
 ## Próximo dia de trabalho — três coisas, nesta ordem
 
+> **FEITO em 12/09/2026.** As três saíram. O que a fila abaixo guarda continua valendo.
+
 A ordem importa: **energia primeiro**. Sem ela, qualquer conteúdo novo é mais uma
 coisa que o jogador não consegue alcançar.
 
-### 1. Energia e comida que restaura
+### 1. Energia e comida que restaura ✅
 
 - Comida vira item consumível: pão, bolo, geleia e queijo devolvem energia.
   Hoje eles só servem pra vender.
@@ -41,13 +43,13 @@ coisa que o jogador não consegue alcançar.
   verdade. Trigo → pão → uma ação a mais no dia. É a espinha do Stardew.
 - Rever `ENERGIA_BASE` e o preço/nível da reforma da casa.
 - **Dizer o que o clima já faz:** a chuva já rega os canteiros de graça
-  (`estado.py:161`), e o jogador nunca soube. Basta uma frase no relatório da
-  manhã. Custo zero, valor real.
+  (`estado.py:161`). A frase já existia; agora ela diz o que isso significa
+  ("sobrou uma ação no seu dia").
 
 Arquivos: `config.py` (ENERGIA_BASE, itens comestíveis), `estado.py`
 (consumir comida), `historia.py` (opção de comer, relatório da manhã).
 
-### 2. Os anos, com o Concurso como placar
+### 2. Os anos, com o Concurso como placar ✅
 
 - Deixar o `dia` crescer sem parar. `ano = (dia - 1) // 28 + 1` e
   `dia_do_ano = (dia - 1) % 28 + 1`. **As estações já ciclam sozinhas**, porque
@@ -62,7 +64,7 @@ Arquivos: `config.py` (ENERGIA_BASE, itens comestíveis), `estado.py`
 Arquivos: `estado.py` (`ano`, `fim_do_ano`, histórico no save), `historia.py`
 (`final_ano`), `interface.py` (HUD).
 
-### 3. O bonequinho personalizável
+### 3. O bonequinho personalizável ✅
 
 **O motor já existe e só é usado pelos outros personagens.** `RETRATOS` não
 guarda desenhos: ele *gera* cada retrato a partir de pele, cor de cabelo, estilo

@@ -50,6 +50,8 @@ class Estado:
         self.stats = {"ganho": 0, "colhido": 0, "pedidos": 0}
         self.modo_livre = False   # sobra de quando o jogo acabava no dia 28
         self.anos = []            # placar de cada ano: {ano, pontos, titulo}
+        self.genero = "f"         # "f" ou "m": muda como a vila te chama
+        self.aparencia = {}       # escolhas do retrato; sprites.APARENCIA_PADRAO preenche o resto
         self.sortear_precos()
         self.gerar_pedidos()
 
@@ -85,6 +87,10 @@ class Estado:
             return 1, 1
         base, prox = XP_NIVEIS[n - 1], XP_NIVEIS[n]
         return self.xp - base, prox - base
+
+    @property
+    def tratamento(self):
+        return "Fazendeira" if self.genero == "f" else "Fazendeiro"
 
     @property
     def energia_max(self):
