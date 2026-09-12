@@ -98,6 +98,10 @@ ITENS = {
     "geleia": ("Geleia de morango", 480), "queijo": ("Queijo", 210),
     "amora": ("Amora", 15), "cogumelo": ("Cogumelo", 40),
     "lambari": ("Lambari", 20), "tilapia": ("Tilápia", 50), "peixe_dourado": ("Peixe dourado", 350),
+    "sopa": ("Sopa de legumes", 240), "omelete": ("Omelete", 130),
+    "peixe_assado": ("Peixe assado", 170), "pao_de_milho": ("Pão de milho", 270),
+    "torta": ("Torta de abóbora", 500), "manteiga": ("Manteiga", 340),
+    "iogurte": ("Iogurte de morango", 430),
     "abobora_gigante": ("Abóbora gigante", 900),
 }
 
@@ -113,7 +117,9 @@ COMIDA = {
     "tilapia": 1, "milho": 1, "leite": 1, "tomate": 1, "morango": 1,
     "abobora": 1, "trufa": 1,
     "pao": 2, "queijo": 2, "geleia": 2, "peixe_dourado": 2,
-    "bolo": 3,
+    "sopa": 2, "omelete": 2, "peixe_assado": 2, "pao_de_milho": 2,
+    "manteiga": 1, "iogurte": 2,
+    "bolo": 3, "torta": 3,
 }
 
 # Quem mora no vale. "adora" e "odeia" sao chutes de personalidade e podem ser
@@ -132,6 +138,8 @@ PONTOS_POR_CORACAO = 10
 CORACOES_MAX = 5
 
 CONSTRUCOES = {
+    "cozinha":   {"nome": "Cozinha da casa", "preco": 180, "nivel": 1,
+                  "desc": "Uma panela boa no fogão: dá para cozinhar o que vem da roça."},
     "galinheiro_grande": {"nome": "Galinheiro ampliado", "preco": 250, "nivel": 2,
                           "desc": "Cabem 5 galinhas em vez de 2."},
     "moinho":    {"nome": "Moinho de ração", "preco": 300, "nivel": 2,
@@ -157,6 +165,15 @@ RECEITAS = {
     "bolo":   {"nome": "Bolo de cenoura", "precisa": {"cenoura": 2, "ovo": 2}, "faz": ("bolo", 1), "predio": "padaria"},
     "geleia": {"nome": "Geleia de morango", "precisa": {"morango": 3}, "faz": ("geleia", 1), "predio": "padaria"},
     "queijo": {"nome": "Queijo", "precisa": {"leite": 2}, "faz": ("queijo", 1), "predio": "laticinio"},
+    "sopa":     {"nome": "Sopa de legumes", "precisa": {"cenoura": 2, "milho": 1}, "faz": ("sopa", 1), "predio": "cozinha"},
+    # so ovo de proposito: e a unica comida cozida que da para fazer no dia 1,
+    # com a galinha que o jogo ja te da. Com leite, dependeria de vaca (nivel 3)
+    "omelete":  {"nome": "Omelete", "precisa": {"ovo": 3}, "faz": ("omelete", 1), "predio": "cozinha"},
+    "peixe_assado": {"nome": "Peixe assado", "precisa": {"tilapia": 2}, "faz": ("peixe_assado", 1), "predio": "cozinha"},
+    "pao_de_milho": {"nome": "Pão de milho", "precisa": {"milho": 3}, "faz": ("pao_de_milho", 1), "predio": "padaria"},
+    "torta":    {"nome": "Torta de abóbora", "precisa": {"abobora": 1, "ovo": 2, "trigo": 2}, "faz": ("torta", 1), "predio": "padaria"},
+    "manteiga": {"nome": "Manteiga", "precisa": {"leite": 3}, "faz": ("manteiga", 1), "predio": "laticinio"},
+    "iogurte":  {"nome": "Iogurte de morango", "precisa": {"leite": 2, "morango": 1}, "faz": ("iogurte", 1), "predio": "laticinio"},
 }
 LOTES_POR_ACAO = 3  # quantas receitas você faz gastando 1 de energia
 

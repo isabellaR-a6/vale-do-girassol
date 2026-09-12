@@ -114,6 +114,12 @@ ITEM_ICONES["lambari"] = _PEIXE
 ITEM_ICONES["tilapia"] = _PEIXE
 ITEM_ICONES["peixe_dourado"] = _PEIXE
 ITEM_ICONES["abobora_gigante"] = ITEM_ICONES["abobora"]
+# comidas novas emprestam o icone de um parente: sem isso elas cairiam no
+# icone da racao, que e o padrao de quem nao tem
+for _novo, _parecido in (("sopa", "cenoura"), ("omelete", "ovo"), ("peixe_assado", "trufa"),
+                         ("pao_de_milho", "pao"), ("torta", "bolo"),
+                         ("manteiga", "queijo"), ("iogurte", "geleia")):
+    ITEM_ICONES[_novo] = ITEM_ICONES[_parecido]
 _COR_PEIXE = {"lambari": {"s": COR["cinza"]}, "tilapia": {"s": (120, 160, 110)},
               "peixe_dourado": {"s": COR["dourado"]}}
 
