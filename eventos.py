@@ -153,7 +153,10 @@ def _pescar(h, lugar):
     if lugar == "pier":
         r = sortear([("lambari", 55), ("tilapia", 25), ("bota", 15), ("nada", 5)])
     else:
-        r = sortear([("tilapia", 40), ("dourado", 12), ("bota", 20), ("cair", 15), ("lambari", 13)])
+        # cair era 15% e "bota" 20%: 35% das idas ao meio nao rendiam nada, e
+        # cair ainda tirava energia por cima da acao ja gasta. O risco continua,
+        # mas nao empilha mais punicao — quem cai volta com alguma coisa.
+        r = sortear([("tilapia", 45), ("dourado", 12), ("bota", 15), ("cair", 10), ("lambari", 18)])
     if r == "lambari":
         n = random.randint(1, 3)
         e.adicionar("lambari", n)
@@ -169,7 +172,9 @@ def _pescar(h, lugar):
         msg = "Você fisga algo pesado... é uma bota velha. Pelo menos o lago ficou mais limpo."
     elif r == "cair":
         e.gastar_energia()
-        msg = "O barco balança e você cai na água! Volta pra casa pingando e cansado(a). (-⚡1)"
+        e.adicionar("lambari", 1)
+        msg = ("O barco balança e você cai na água! Sai de lá pingando e com frio... mas com um "
+               "lambari teimoso agarrado na camisa. (-⚡1, +1 lambari)")
     else:
         msg = "Nenhum peixe quis conversa hoje. Mas o pôr do sol valeu a pena."
     return Tela(msg, [Opcao("Voltar para a fazenda", h.menu_fazenda)], titulo="Lago", local="lago",
