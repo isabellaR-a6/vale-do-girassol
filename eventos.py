@@ -282,17 +282,19 @@ CARTAS = {
 
 def da_manha(h):
     e = h.e
-    if e.dia in CARTAS and not e.flags.get(f"carta{e.dia}"):
-        e.flags[f"carta{e.dia}"] = True
-        if e.dia == 22:
+    # Estes marcos sao do ANO, nao do jogo: com o calendario passando de 28, usar
+    # e.dia faria o festival e as cartas acontecerem so no primeiro ano.
+    if e.dia_do_ano in CARTAS and not e.flags.get(f"carta{e.dia_do_ano}"):
+        e.flags[f"carta{e.dia_do_ano}"] = True
+        if e.dia_do_ano == 22:
             e.dinheiro += 300
-        return Tela(f"Bom dia! Tem uma carta na caixa do correio...\n\"{CARTAS[e.dia]}\" - Vovó Cida",
+        return Tela(f"Bom dia! Tem uma carta na caixa do correio...\n\"{CARTAS[e.dia_do_ano]}\" - Vovó Cida",
                     [Opcao("Guardar a carta", h.menu_fazenda)], titulo="Carta da Vovó", retrato="vovo",
-                    som="moeda" if e.dia == 22 else "")
-    if e.dia == 21 and not e.flags.get("festival"):
-        e.flags["festival"] = True
+                    som="moeda" if e.dia_do_ano == 22 else "")
+    if e.dia_do_ano == 21 and e.flags.get("festival") != e.ano:
+        e.flags["festival"] = e.ano
         return festival(h)
-    if e.dia < 3 or random.random() > 0.45:
+    if e.dia_do_ano < 3 or random.random() > 0.45:
         return None
     possiveis = ["limonada", "lucia", "estrelas"]
     galinhas = [a for a in e.animais if a["tipo"] in ("galinha", "pato")]
