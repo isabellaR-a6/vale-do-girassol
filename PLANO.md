@@ -203,6 +203,24 @@ pra qualquer dia.
 
 ---
 
+## O que saiu no dia 12/09/2026
+
+Além das três do topo e das que estão marcadas na fila:
+
+- **Cozinha da casa e 7 receitas novas** — havia 4 receitas de verdade, todas
+  atrás de prédios de nível 3 e 4: no começo do jogo não existia comida cozida.
+- **Caderneta do vale** — ver corações, gostos, aniversários e bônus sem gastar
+  a ação de ir à cidade.
+- **Prêmios da amizade** — os corações destravam preço melhor, obra mais barata,
+  pedido que paga mais, energia e presentes de manhã.
+- **Limite de presentes** — dois por pessoa a cada 7 dias, para amizade ser
+  construída com tempo em vez de comprada com o celeiro cheio.
+- **Correções achadas jogando:** o meio do lago castigava duas vezes; o festival
+  só acontecia no ano 1 (regressão dos anos); presentear e comer vazavam da tela
+  com o celeiro cheio; o cabelo comprido parecia barba; travessões viravam "?".
+- **`tools/checar_texto.py`** — acusa caractere que a fonte não desenha, antes
+  de virar interrogação na tela.
+
 ## O que NÃO fazer
 
 - **Namoro/casamento.** É o que mais dá retorno no Stardew e o que mais custa:

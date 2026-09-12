@@ -282,11 +282,20 @@ def pessoa(h, chave, msg=""):
         # ■ conquistado, □ ainda não. A fonte não tem ✓ e trocaria por "?"
         linhas.append(("■ " if tem else f"□ {n}♥ ") + txt)
     ja = e.ja_viu_hoje(chave)
+    pode = e.pode_presentear(chave)
+    usados = len(e.presentes_recentes(chave))
+    if not pode:
+        dica_presente = f"volta em {e.dias_ate_presentear(chave)} dia(s)"
+    elif not e.celeiro:
+        dica_presente = "celeiro vazio"
+    else:
+        dica_presente = f"{usados} de {e.PRESENTES_POR_JANELA} na semana"
+    linhas.append(f"Presentes desta semana: {usados} de {e.PRESENTES_POR_JANELA}.")
     ops = [
         Opcao("Conversar", lambda: conversar(h, chave), ativa=not ja,
               dica="já conversaram hoje" if ja else "+♥"),
-        Opcao("Dar um presente", lambda: presentear(h, chave), ativa=not ja and bool(e.celeiro),
-              dica="celeiro vazio" if not e.celeiro else ("já foi hoje" if ja else "")),
+        Opcao("Dar um presente", lambda: presentear(h, chave), ativa=pode and bool(e.celeiro),
+              dica=dica_presente),
         Opcao("Voltar", lambda: gente(h)),
     ]
     return Tela(NL.join(linhas), ops, titulo=d["nome"], local="cidade", retrato=chave)
@@ -351,7 +360,7 @@ def _dar(h, chave, item):
     e = h.e
     d = PESSOAS[chave]
     e.remover(item, 1)
-    e.marcar_visita(chave)
+    e.marcar_presente(chave)
     if item == d["adora"]:
         pontos, reacao = 8, "Os olhos brilham! Era exatamente isso que faltava."
         e.descobrir(chave, "adora")

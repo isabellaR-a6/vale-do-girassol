@@ -53,7 +53,8 @@ class Estado:
         self.genero = "f"         # "f" ou "m": muda como a vila te chama
         self.aparencia = {}       # escolhas do retrato; sprites.APARENCIA_PADRAO preenche o resto
         self.amizade = {}         # chave da pessoa -> pontos
-        self.visto_hoje = {}      # chave -> dia em que voce ja conversou/presenteou
+        self.visto_hoje = {}      # chave -> dia da ultima conversa
+        self.presentes = {}       # chave -> dias em que voce presenteou
         self.sabidos = []         # "chave:adora" / "chave:odeia" ja descobertos
         self.abobora = None       # projeto da abobora gigante do ano: {"cuidados", "faltas", "regada"}
         self.sortear_precos()
@@ -103,12 +104,39 @@ class Estado:
         self.amizade[chave] = max(0, min(teto, self.amizade.get(chave, 0) + n))
         return self.coracoes(chave) > antes
 
+    PRESENTES_POR_JANELA = 2
+    JANELA_PRESENTE = 7
+
     def ja_viu_hoje(self, chave):
-        """Uma conversa e um presente por pessoa por dia: senao vira moedinha."""
+        """Uma conversa por pessoa por dia: senao vira moedinha."""
         return self.visto_hoje.get(chave) == self.dia
 
     def marcar_visita(self, chave):
         self.visto_hoje[chave] = self.dia
+
+    def presentes_recentes(self, chave):
+        """Os presentes dados a essa pessoa dentro da janela que ainda conta."""
+        return [d for d in self.presentes.get(chave, []) if self.dia - d < self.JANELA_PRESENTE]
+
+    def pode_presentear(self, chave):
+        """Dois presentes por pessoa a cada sete dias.
+
+        Sem limite, um celeiro cheio compra cinco coracoes num dia so, e a
+        amizade deixa de ser construida com tempo.
+        """
+        return len(self.presentes_recentes(chave)) < self.PRESENTES_POR_JANELA
+
+    def marcar_presente(self, chave):
+        lista = self.presentes_recentes(chave)
+        lista.append(self.dia)
+        self.presentes[chave] = lista
+
+    def dias_ate_presentear(self, chave):
+        """Quantos dias faltam para liberar a proxima vaga de presente."""
+        recentes = sorted(self.presentes_recentes(chave))
+        if len(recentes) < self.PRESENTES_POR_JANELA:
+            return 0
+        return self.JANELA_PRESENTE - (self.dia - recentes[0])
 
     def sabe(self, chave, tipo):
         return f"{chave}:{tipo}" in self.sabidos
