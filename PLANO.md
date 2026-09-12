@@ -149,7 +149,7 @@ abóbora precisa de água".
 Existe e hoje é quase decoração. Carinho de manhã dá energia, ou acompanha na
 floresta e acha coisa, ou espanta a raposa.
 
-### Música que muda com a estação
+### Música que muda com a estação ✅ (12/09/2026)
 
 `MUSICA_DO_LOCAL` mapeia por **lugar** (título, fazenda, cidade, festa), não por
 estação: primavera e inverno soam igual. O cenário e o céu já mudam; falta o
@@ -158,9 +158,11 @@ ouvido.
 Importa mais agora que o jogo vai ter anos: o que faz um ano *parecer* um ano não
 é o contador na tela, é a coisa mudar de cor e de som embaixo do jogador.
 
-**Não precisa compor quatro músicas.** Com `ESTILOS` e o sistema de acordes que já
-existem, dá pra vestir o mesmo tema de outro jeito: mais grave e lento no inverno,
-mais agudo e rápido no verão.
+**Feito assim:** `ESTACAO_MUSICA` no `musica.py` guarda (estilo, delta de bpm) por
+estação, e `Musica.ajustar_estacao` re-sintetiza o tema da fazenda nas quatro
+viradas do ano. Primavera 112 bpm alegre, Verão 124 alegre, Outono 98 calmo,
+Inverno 82 ninar. **Ninguém ouviu ainda** — os números são plausíveis, mas se
+alguma estação soar errada é só mexer nessa tabela.
 
 ### Mais animais
 

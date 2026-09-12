@@ -161,6 +161,7 @@ class Jogo:
             self._aplicar(nova)
 
     def _aplicar(self, nova):
+        self.musica.ajustar_estacao(self.historia.e.estacao)
         self.ui.nova_tela(nova)
         self.musica.para_local(nova.local)
         if nova.som:

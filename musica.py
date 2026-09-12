@@ -56,6 +56,19 @@ MUSICAS = {
 }
 
 # qual música toca em cada lugar
+# A fazenda soa diferente em cada estação. Não é música nova: é o mesmo tema
+# vestido de outro jeito, mudando o andamento e o instrumento. O cenário e o céu
+# já mudam com a estação; faltava o ouvido perceber que o ano está passando.
+#
+# (estilo, quanto muda o bpm em relação ao tema base)
+ESTACAO_MUSICA = {
+    "Primavera": ("alegre", 0),     # o tema como ele nasceu
+    "Verão":     ("alegre", 12),    # mais corrido, dia comprido
+    "Outono":    ("calmo", -14),    # arrastado, com eco
+    "Inverno":   ("ninar", -30),    # quase parado, quieto
+}
+BPM_FAZENDA = MUSICAS["fazenda"]["bpm"]
+
 MUSICA_DO_LOCAL = {"titulo": "fazenda", "fazenda": "fazenda", "cidade": "cidade", "festa": "cidade",
                    "floresta": "calmo", "lago": "calmo", "vizinho": "calmo", "noite": "noite"}
 
@@ -240,6 +253,7 @@ class Musica:
         self.faixas = {}
         self.atual = None
         self.desejada = "fazenda"
+        self.estacao = None   # qual estação o tema da fazenda está vestindo
         self.mudo = False
         self.fila = ["fazenda", "calmo", "cidade", "noite"]
         self.gerando = None  # (nome, gerador) da música sendo sintetizada agora
@@ -272,6 +286,21 @@ class Musica:
             self.faixas[nome] = som
             self.gerando = None
         return True
+
+    def ajustar_estacao(self, estacao):
+        """Reveste o tema da fazenda quando a estação vira.
+
+        Só re-sintetiza nas quatro viradas do ano, não a cada tela. A faixa
+        antiga continua tocando até a nova ficar pronta e ocupar o lugar dela.
+        """
+        if estacao == self.estacao or estacao not in ESTACAO_MUSICA:
+            return
+        self.estacao = estacao
+        estilo, delta = ESTACAO_MUSICA[estacao]
+        MUSICAS["fazenda"]["estilo"] = estilo
+        MUSICAS["fazenda"]["bpm"] = BPM_FAZENDA + delta
+        if "fazenda" not in self.fila:
+            self.fila.append("fazenda")
 
     def para_local(self, local):
         self.desejada = MUSICA_DO_LOCAL.get(local, "fazenda")
