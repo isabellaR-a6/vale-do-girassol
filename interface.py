@@ -361,9 +361,9 @@ class UI:
                         sombra=COR["verde_ui_esc"], centro=True)
         # dia, estação e clima (no celular: só o essencial, com letra grande)
         if self.celular:
-            info = f"Dia {e.dia} · {e.estacao}"
+            info = f"Ano {e.ano} · {e.estacao}"
         else:
-            info = f"Dia {e.dia}  ·  {e.estacao} {e.dia_da_estacao}/7  ·  {e.nome_clima}"
+            info = f"Ano {e.ano}  ·  {e.estacao} {e.dia_da_estacao}/7  ·  {e.nome_clima}"
         r = pygame.Rect(132, 6 if self.celular else 8, self.f.largura(info, esc) + 18, 6 + 12 * esc)
         pilula(s, r)
         self.f.desenhar(s, info, r.x + 9, r.y + 1 + esc, COR["texto"], esc)

@@ -326,7 +326,8 @@ class Historia:
             ops.append(op)
         ops.append(Opcao("Voltar", self.menu_fazenda))
         texto = (msg + "\n" if msg else "") + \
-            f"Com ⚡1 você produz até 3 receitas de uma vez. Itens feitos valem bem mais no mercado!"
+            ("Com ⚡1 você produz até 3 receitas de uma vez. Itens feitos valem bem mais "
+             "no mercado, e comida feita aqui enche mais a sua energia que a da roça.")
         return Tela(texto, ops, titulo="Oficinas", painel="celeiro")
 
     def produzir(self, chave):
@@ -364,10 +365,17 @@ class Historia:
         if evento:
             return evento
         e = self.e
-        return self.menu_fazenda(f"Bom dia! Dia {e.dia}, {e.estacao}. O tempo está: {e.nome_clima.lower()}.")
+        return self.menu_fazenda(f"Bom dia! Ano {e.ano}, {e.estacao} {e.dia_da_estacao}/7. O tempo está: {e.nome_clima.lower()}.")
 
     def final_ano(self):
+        """O Concurso da Fazenda do Ano, agora todo fim de ano.
+
+        Antes ele acontecia uma vez so: ao terminar o dia 28 o jogo ligava o
+        modo livre e a cerimonia nunca mais voltava. Agora ela fecha cada ano e
+        guarda a pontuacao, para o proximo ano ter o que superar.
+        """
         e = self.e
+        que_acabou = e.ano - 1
         pat = e.patrimonio() + e.reputacao * 40 + e.nivel * 100
         if pat >= 10000:
             titulo, fala = "FAZENDA LENDÁRIA", ("Nunca vi nada igual! A Fazenda Girassol virou cartão-postal do vale. "
@@ -381,16 +389,59 @@ class Historia:
         else:
             titulo, fala = "UM BOM COMEÇO", ("Foi um ano difícil, mas você não desistiu. Toda grande fazenda "
                                              "começou com um canteiro só.")
-        texto = (f"Prefeito Otávio: \"Atenção, vale! O resultado do Concurso da Fazenda do Ano...\"\n"
-                 f"Pontuação de {e.nome}: {pat} pontos (patrimônio, amizade e experiência).\n"
-                 f"Título: {titulo}! {fala}\n"
-                 f"Você ganhou ¢{e.stats['ganho']}, colheu {e.stats['colhido']} vezes e entregou "
-                 f"{e.stats['pedidos']} pedido(s).")
 
-        def livre():
-            e.modo_livre = True
+        anterior = e.anos[-1]["pontos"] if e.anos else None
+        # e.stats conta o jogo inteiro e nunca zera. Para o Prefeito falar do ANO,
+        # e preciso descontar o que ja tinha sido contado na festa anterior.
+        antes = e.anos[-1].get("stats", {}) if e.anos else {}
+        do_ano = {k: v - antes.get(k, 0) for k, v in e.stats.items()}
+        e.anos.append({"ano": que_acabou, "pontos": pat, "titulo": titulo,
+                       "stats": dict(e.stats)})
+        e.salvar()   # grava ja: sair no meio da festa nao pode apagar o ano
+
+        linhas = [f"Prefeito Otávio: \"Atenção, vale! O resultado do Concurso da Fazenda do Ano...\"",
+                  f"Ano {que_acabou} de {e.nome}: {pat} pontos (patrimônio, amizade e experiência).",
+                  f"Título: {titulo}! {fala}"]
+        if anterior is not None:
+            dif = pat - anterior
+            if dif > 0:
+                linhas.append(f"São {dif} pontos a mais que no ano passado. A fazenda cresceu!")
+            elif dif < 0:
+                linhas.append(f"Foram {-dif} pontos a menos que no ano passado. Ano que vem a gente vira o jogo.")
+            else:
+                linhas.append("Exatamente a mesma pontuação do ano passado. Que coincidencia!")
+        linhas.append(f"Neste ano você ganhou ¢{do_ano['ganho']}, colheu {do_ano['colhido']} vezes "
+                      f"e entregou {do_ano['pedidos']} pedido(s).")
+
+        def seguir():
             e.salvar()
             return self.amanhecer()
-        return Tela(texto, [Opcao("Continuar cuidando da fazenda", livre),
-                            Opcao("Voltar ao título", self.titulo)],
+        ops = [Opcao(f"Começar o Ano {e.ano}", seguir)]
+        if len(e.anos) > 1:
+            ops.append(Opcao("Ver os anos anteriores", self.ver_anos))
+        ops.append(Opcao("Voltar ao título", self.titulo))
+        return Tela(chr(10).join(linhas), ops,
                     local="festa", retrato="prefeito", titulo="Festival do Fim do Ano", som="fanfarra")
+
+    def ver_anos(self):
+        e = self.e
+        melhor = max(a["pontos"] for a in e.anos)
+        linhas = ["O Prefeito guarda todos os resultados numa pasta velha:"]
+        for a in e.anos:
+            marca = "  <- melhor até hoje" if a["pontos"] == melhor else ""
+            linhas.append(f"Ano {a['ano']}: {a['pontos']} pontos - {a['titulo']}{marca}")
+        return Tela(chr(10).join(linhas), [Opcao("Voltar", self.final_ano_resumo)],
+                    local="festa", retrato="prefeito", titulo="Os anos da Fazenda Girassol")
+
+    def final_ano_resumo(self):
+        """Volta do historico sem pontuar o ano de novo."""
+        e = self.e
+
+        def seguir():
+            e.salvar()
+            return self.amanhecer()
+        return Tela(f"O festival continua. O Ano {e.ano} espera por você.",
+                    [Opcao(f"Começar o Ano {e.ano}", seguir),
+                     Opcao("Voltar ao título", self.titulo)],
+                    local="festa", retrato="prefeito", titulo="Festival do Fim do Ano")
+

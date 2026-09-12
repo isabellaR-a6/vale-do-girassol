@@ -48,7 +48,8 @@ class Estado:
         self.cachorro = None
         self.flags = {}
         self.stats = {"ganho": 0, "colhido": 0, "pedidos": 0}
-        self.modo_livre = False
+        self.modo_livre = False   # sobra de quando o jogo acabava no dia 28
+        self.anos = []            # placar de cada ano: {ano, pontos, titulo}
         self.sortear_precos()
         self.gerar_pedidos()
 
@@ -376,8 +377,22 @@ class Estado:
         return rel
 
     @property
+    def ano(self):
+        return (self.dia - 1) // DIAS_DO_ANO + 1
+
+    @property
+    def dia_do_ano(self):
+        return (self.dia - 1) % DIAS_DO_ANO + 1
+
+    @property
     def fim_do_ano(self):
-        return self.dia > DIAS_DO_ANO and not self.modo_livre
+        """Verdadeiro na virada, logo depois do dia crescer.
+
+        O dia nunca para de crescer: o ano e a estacao saem dele por conta.
+        `estacao` ja usava `% 4`, entao as quatro ja davam a volta sozinhas —
+        so faltava deixar o calendario passar de 28.
+        """
+        return self.dia > 1 and self.dia_do_ano == 1
 
     def patrimonio(self):
         total = self.dinheiro
