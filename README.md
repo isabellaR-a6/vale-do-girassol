@@ -3,7 +3,7 @@
 RPG de escolhas numa fazenda, feito 100% em Python (pygame) com pixel art desenhada em código.
 Nenhuma imagem ou som externo: sprites, fonte pixelada e efeitos 8-bit são gerados pelo próprio jogo.
 
-> 🎮 **Jogar agora (celular ou PC):** https://vale-do-girassol.netlify.app — deite o celular e toque na tela.
+> 📱 **App de iPhone:** veja [COMO-POR-APP-PYTHON-NO-IPHONE.md](COMO-POR-APP-PYTHON-NO-IPHONE.md)
 >
 > 📦 **App Android (APK):** https://github.com/isabellaR-a6/vale-do-girassol/releases/tag/apk — gerado sozinho pelo GitHub Actions.
 >
@@ -24,27 +24,16 @@ python main.py
 **Música:** 4 trilhas chiptune compostas em código (`musica.py`): fazenda, cidade, floresta/lago e noite.
 Elas trocam sozinhas conforme o lugar, com transição suave.
 
-## Jogar no celular / no navegador
+## Jogar no celular
 
-O [pygbag](https://pygame-web.github.io) transforma o jogo num site estático (Python rodando em WebAssembly).
+Dois caminhos, os dois gerados sozinhos pelo GitHub Actions:
 
-**Publicação automática (ligada):** o site https://vale-do-girassol.netlify.app está ligado a este repositório;
-cada `git push` gera e publica a versão web sozinho (a receita está no `netlify.toml`). Passo a passo em [COMO_TRABALHAR.md](COMO_TRABALHAR.md#6-versão-web-celular-e-publicação).
+- **Android (APK):** baixe da [release `apk`](https://github.com/isabellaR-a6/vale-do-girassol/releases/tag/apk),
+  abra o arquivo e permita "instalar apps desconhecidos". É o jeito mais fácil de passar para alguém.
+- **iPhone (.ipa):** passo a passo em [COMO-POR-APP-PYTHON-NO-IPHONE.md](COMO-POR-APP-PYTHON-NO-IPHONE.md).
 
-**Gerar à mão** (rode *dentro* desta pasta, para ele ler o `pygbag.ini`, que deixa o save de fora):
-
-```bash
-python -X utf8 -m pygbag --build --archive --title "Vale do Girassol" --template web/pagina.tmpl --icon web/icone.png .
-```
-
-Isso cria `build/web/` (o site) e `build/web.zip` (para o itch.io). O `-X utf8` é necessário no Windows por causa dos acentos.
-
-- **Netlify manual:** abra <https://app.netlify.com/drop> e arraste a pasta `build/web`.
-- **itch.io:** crie um projeto do tipo *HTML*, envie o `build/web.zip`, marque *"This file will be played in the browser"*,
-  tamanho 1280×720, e ative *Mobile friendly* e *Fullscreen button*.
-
-**Jogar:** abra o link no celular, **deite o celular** (modo paisagem) e toque na tela para começar.
-Na web o save fica guardado no navegador (localStorage), separado do save do computador.
+> A versão web (pygbag + Netlify) foi aposentada em 12/09/2026 — ficava bugada demais para valer a manutenção.
+> A pasta `web/` continua existindo porque guarda o ícone e a tela de abertura usados pelo iPhone e pelo Android.
 
 **Modo celular:** em telas de toque o jogo usa letra 2× maior e botões altos, e mostra
 o jogo girado se ele estiver em pé: é só virar o celular de lado, mesmo com a rotação travada. Para ver esse layout no PC: `python main.py --celular`.
@@ -73,6 +62,6 @@ Em 28 dias (4 estações) a vila avalia a sua fazenda no Concurso da Fazenda do 
 | `tela.py` | Estrutura de uma tela (texto + opções) |
 | `interface.py`, `fonte.py` | Caixa de diálogo, HUD e fonte pixelada |
 | `cenario.py`, `cenario_locais.py`, `desenho.py`, `sprites.py` | Pixel art dos cenários, personagens e itens |
-| `requirements.txt` | Bibliotecas: `pygame` (jogo) e `pygbag` (versão web) |
-| `netlify.toml`, `pygbag.ini` | Receita da versão web e da publicação automática no Netlify |
+| `requirements.txt` | Bibliotecas: `pygame` |
+| `web/icone.png`, `web/abertura.png` | Ícone e tela de abertura usados pelo iPhone e pelo Android |
 | `COMO_TRABALHAR.md` | Guia para trabalhar de outro notebook |

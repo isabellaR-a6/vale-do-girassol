@@ -1,9 +1,8 @@
 """Vale do Girassol - um RPG de escolhas numa fazenda, em pixel art.
 
 Rodar:  python main.py      (precisa do pygame:  pip install pygame)
-Versão web (celular/navegador), rodando DENTRO desta pasta (para ler o pygbag.ini):
-    python -X utf8 -m pygbag --build --archive --title "Vale do Girassol" --template web/pagina.tmpl --icon web/icone.png .
-    -> build/web e build/web.zip  (web/pagina.tmpl é a página própria: tamanho certo no celular e pixels nítidos)
+Celular: APK do Android e .ipa de iPhone saem do GitHub Actions (veja o README).
+A versão web foi aposentada em 12/09/2026; o laço assíncrono continua porque funciona.
 Controles: mouse/toque, setas + ENTER/ESPAÇO, ou teclas 1-9.  F11 = tela cheia.  M = liga/desliga música.
 """
 import array

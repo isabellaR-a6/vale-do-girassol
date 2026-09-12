@@ -92,7 +92,6 @@ git push
 | Arquivo/pasta | Por quê |
 |---|---|
 | `save_fazenda.json` | É o seu progresso no jogo. Cada computador tem o seu. Para levar o progresso, copie esse arquivo à mão. |
-| `build/` | É gerado pelo pygbag (versão web). Dá para gerar de novo quando quiser. |
 | `__pycache__/` | Arquivos temporários do Python. |
 
 (Isso está configurado no `.gitignore`.)
@@ -106,42 +105,21 @@ git push
 
 Teclas: **M** liga/desliga a música, **F11** tela cheia.
 
-## 6. Versão web (celular) e publicação
+## 6. Versão web — aposentada
 
-### Jeito automático (já está ligado ✅)
+A versão web (pygbag + Netlify) **saiu do projeto em 12/09/2026**. Ficava bugada demais para valer a manutenção.
+Foram removidos o `netlify.toml`, o `pygbag.ini` e o `web/pagina.tmpl`.
 
-🎮 **Link do jogo: https://vale-do-girassol.netlify.app**
-📋 Painel dos deploys: https://app.netlify.com/projects/vale-do-girassol/deploys
+⚠️ A pasta `web/` **continua**, apesar do nome: o `web/icone.png` vira o ícone do iPhone (o `ios.yml` gera o
+`AppIcon` @2x e @3x a partir dele) e do Android, e o `web/abertura.png` é a tela de abertura do Android.
+Não apague esses dois.
 
-O projeto **vale-do-girassol** do Netlify está ligado a este repositório. **Cada `git push` no branch `main`
-gera e publica a versão nova sozinho**, em 1–2 minutos. Nada de arrastar pasta.
+Para distribuir o jogo hoje existem dois caminhos: o **APK Android** (abaixo) e o **app de iPhone**
+(veja `COMO-POR-APP-PYTHON-NO-IPHONE.md`).
 
-- Se um deploy falhar, abra o painel acima, clique no deploy com status **Failed** e leia o log.
-  O site continua mostrando a última versão que deu certo.
-- A receita do build fica no `netlify.toml`. Ele fixa o **Python 3.12**, porque o Netlify usa uma versão mais nova
-  por padrão, e o pygame ainda não funciona nela (o Netlify instala o `requirements.txt` sozinho antes do build).
-- A página do jogo é o **`web/pagina.tmpl`** (não o modelo padrão do pygbag): é ela que encaixa a tela em 16:9
-  ao abrir, girar o celular ou redimensionar, bloqueia o zoom e deixa os pixels nítidos. O ícone é o `web/icone.png`.
-- O selo "Powered by Netlify" está **desligado** (Project configuration → General → Powered by Netlify badge),
-  porque ficava por cima das opções do jogo.
+## 7. App Android (APK) feito pelo GitHub
 
-> Esse site é **separado** do site da VSC. Não ligue este repositório ao site da oficina.
-
-### Jeito manual
-
-```bash
-python -X utf8 -m pygbag --build --archive --title "Vale do Girassol" --template web/pagina.tmpl --icon web/icone.png .
-```
-
-Isso cria `build/web` (arraste em https://app.netlify.com/drop) e `build/web.zip` (para o itch.io).
-Rode **dentro da pasta do projeto**, para ele ler o `pygbag.ini`. O `-X utf8` evita erro com acentos no Windows.
-
-No celular: abra o link e toque na tela para começar. Se o celular estiver em pé, o jogo aparece girado:
-é só **virar o celular de lado** (funciona mesmo com a rotação automática travada).
-
-## 6b. App Android (APK) feito pelo GitHub
-
-Além do site, o GitHub gera um **app Android de verdade** (APK), que roda sem internet e em tela cheia.
+O GitHub gera um **app Android de verdade** (APK), que roda sem internet e em tela cheia.
 
 📦 **Download: https://github.com/isabellaR-a6/vale-do-girassol/releases/tag/apk**
 (o repositório é privado: no celular, entre na conta do GitHub antes de abrir o link)
@@ -161,7 +139,7 @@ Para gerar na mão: aba **Actions** do repositório → **APK Android** → **Ru
 - **Se falhar:** aba Actions → clique no build com ❌ → abra o passo que falhou e leia o fim do log.
 - **Minutos:** repositório privado tem ~2000 minutos grátis de Actions por mês; cada APK gasta uns 30.
 
-## 7. Onde mexer em cada coisa
+## 8. Onde mexer em cada coisa
 
 | Quero mudar... | Arquivo |
 |---|---|
@@ -175,18 +153,15 @@ Para gerar na mão: aba **Actions** do repositório → **APK Android** → **Ru
 | Desenhos (sprites, cenários) | `sprites.py`, `cenario.py`, `cenario_locais.py`, `desenho.py` |
 | Letras da fonte pixelada | `fonte.py` |
 
-## 8. Problemas comuns
+## 9. Problemas comuns
 
 | Problema | Solução |
 |---|---|
 | `'python' não é reconhecido` | Reinstale o Python marcando **Add to PATH**, ou use `py` no lugar de `python`. |
 | `No module named 'pygame'` | `pip install -r requirements.txt` |
-| `UnicodeDecodeError` ao gerar a versão web | Use o comando com `python -X utf8 ...` |
 | `git push` pede senha e não aceita | A senha da conta não funciona no Git; use o login pela janela do navegador. |
 | `git pull` diz que há mudanças locais | Faça `add` + `commit` antes, e depois `git pull` de novo. |
-| A página web fica cinza parada | Espere (a 1ª vez baixa o Python, ~20 s) e toque na tela. |
 
-## 9. Usando o Claude Code
+## 10. Usando o Claude Code
 
 Abra a pasta do projeto no Claude Code e peça o que quiser ("adiciona uma cultura nova", "muda a música da cidade").
-O arquivo `.claude/launch.json` já tem o servidor **fazenda-web** para testar a versão web gerada em `build/web`.
