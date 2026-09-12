@@ -450,7 +450,32 @@ def festival(h):
                              f"Prêmio: ¢{premio}. A vila inteira aplaude! (+★30, +2 ♥)"),
                     [Opcao("Voltar para a fazenda", h.menu_fazenda)], local="festa", retrato="prefeito",
                     titulo="Festival da Colheita", som="fanfarra")
-    ops = [Opcao(f"Inscrever: {nome_item(i)}", lambda k=i: inscrever(k), icone=i) for i in candidatos]
+    def inscrever_gigante():
+        peso = e.peso_abobora()
+        e.abobora = None
+        if peso >= 60:
+            premio, lugar = 1200, "CAMPEÃ DO VALE"
+            e.adicionar("abobora_gigante", 1)
+        elif peso >= 40:
+            premio, lugar = 600, "2º lugar"
+        elif peso >= 25:
+            premio, lugar = 300, "3º lugar"
+        else:
+            premio, lugar = 120, "menção honrosa"
+        e.dinheiro += premio
+        e.reputacao += 3
+        e.mudar_amizade("prefeito", 5)
+        return Tela(h.xp(40, f"Quatro homens carregam a sua abóbora até a balança. O ponteiro sobe, sobe... "
+                             f"{peso} KG! O Prefeito Otávio grita: {lugar}! Prêmio: ¢{premio}. "
+                             f"(+★40, +3 ♥ na vila)"),
+                    [Opcao("Voltar para a fazenda", h.menu_fazenda)], local="festa", retrato="prefeito",
+                    titulo="Concurso da Abóbora Gigante", som="fanfarra")
+
+    ops = []
+    if e.abobora:
+        ops.append(Opcao(f"Inscrever a ABÓBORA GIGANTE · {e.peso_abobora()} kg", inscrever_gigante,
+                         icone="abobora"))
+    ops += [Opcao(f"Inscrever: {nome_item(i)}", lambda k=i: inscrever(k), icone=i) for i in candidatos]
     ops.append(Opcao("Só assistir e comer pamonha", lambda: voltar(h, "Você come três pamonhas e dança quadrilha. Que festa!")))
     texto = "Bom dia! Hoje é o FESTIVAL DA COLHEITA! A praça está enfeitada e o prefeito chama os fazendeiros " \
             "para o concurso. Qual produto seu vai para a mesa dos jurados?"

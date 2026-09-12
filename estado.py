@@ -55,6 +55,7 @@ class Estado:
         self.amizade = {}         # chave da pessoa -> pontos
         self.visto_hoje = {}      # chave -> dia em que voce ja conversou/presenteou
         self.sabidos = []         # "chave:adora" / "chave:odeia" ja descobertos
+        self.abobora = None       # projeto da abobora gigante do ano: {"cuidados", "faltas", "regada"}
         self.sortear_precos()
         self.gerar_pedidos()
 
@@ -117,6 +118,46 @@ class Estado:
             self.sabidos.append(f"{chave}:{tipo}")
             return True
         return False
+
+    # ------------------------------------------------- a abobora gigante do ano
+    SEMENTE_ABOBORA = 200
+    FALTAS_ATE_MORRER = 3
+
+    def pode_plantar_abobora(self):
+        """So no comeco do outono, e uma por ano: ela e criada para o Festival."""
+        return self.abobora is None and 15 <= self.dia_do_ano <= 18
+
+    def plantar_abobora(self):
+        self.dinheiro -= self.SEMENTE_ABOBORA
+        self.abobora = {"cuidados": 0, "faltas": 0, "regada": 0, "ano": self.ano}
+
+    def cuidar_abobora(self):
+        self.abobora["cuidados"] += 1
+        self.abobora["regada"] = self.dia
+        return self.abobora["cuidados"]
+
+    def abobora_cuidada_hoje(self):
+        return bool(self.abobora) and self.abobora["regada"] == self.dia
+
+    def peso_abobora(self):
+        """Cada dia de cuidado engorda a abóbora. Faltar faz ela murchar."""
+        if not self.abobora:
+            return 0
+        return max(8, 12 + self.abobora["cuidados"] * 9 - self.abobora["faltas"] * 5)
+
+    def noite_da_abobora(self):
+        """Roda junto com a noite. Devolve uma frase para o relatório, ou None."""
+        a = self.abobora
+        if not a:
+            return None
+        if a["regada"] == self.dia:
+            return f"A abóbora gigante engordou mais um pouco ({self.peso_abobora()} kg)."
+        a["faltas"] += 1
+        if a["faltas"] >= self.FALTAS_ATE_MORRER:
+            self.abobora = None
+            return "A abóbora gigante murchou de sede. Ficou pelo caminho..."
+        return (f"A abóbora gigante passou o dia sem cuidado e murchou um pouco "
+                f"({a['faltas']} de {self.FALTAS_ATE_MORRER}).")
 
     def aniversariante(self):
         """Quem faz aniversário hoje (chave), ou None. A data é o dia do ano."""
@@ -422,6 +463,9 @@ class Estado:
             rel.append("Está chovendo: as plantações já amanheceram regadas, então sobrou uma ação no seu dia.")
         elif self.tem("irrigacao") and any(c["cultura"] for c in self.canteiros):
             rel.append("A irrigação regou tudo sozinha.")
+        frase = self.noite_da_abobora()
+        if frase:
+            rel.append(frase)
         self.gerar_pedidos()
         return rel
 

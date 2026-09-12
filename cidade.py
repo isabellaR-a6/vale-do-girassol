@@ -51,9 +51,19 @@ def mercado(h, msg=""):
               dica="" if e.celeiro else "celeiro vazio"),
         Opcao(f"Comprar {q} de ração", lambda: comprar_racao(h), ativa=e.dinheiro >= preco,
               dica=f"¢{preco}", icone="racao"),
+        Opcao("Comprar semente de abóbora gigante", lambda: comprar_abobora(h),
+              ativa=e.pode_plantar_abobora() and e.dinheiro >= e.SEMENTE_ABOBORA,
+              dica=(f"¢{e.SEMENTE_ABOBORA}" if e.pode_plantar_abobora()
+                    else "só no começo do outono"), icone="abobora"),
         Opcao("Voltar à praça", lambda: praca(h)),
     ]
     return Tela(texto, ops, titulo="Mercado", local="cidade", retrato="lucia", painel="celeiro")
+
+
+def comprar_abobora(h):
+    h.e.plantar_abobora()
+    return mercado(h, "Dona Lúcia entrega a semente com cuidado: \"Essa aqui é especial. "
+                      "Rega todo santo dia até o Festival, senão ela murcha. Boa sorte!\"")
 
 
 def comprar_racao(h):

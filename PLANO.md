@@ -134,7 +134,7 @@ enxada virar "arar antes de plantar", a gente desfaz o conserto da energia.
 Madeira e pedra viram **segunda moeda**: melhorar a casa e o celeiro passa a ser
 conquistado, não só comprado.
 
-### O Concurso da Abóbora Gigante
+### O Concurso da Abóbora Gigante ✅ (12/09/2026)
 
 `abobora_gigante` **já existe** e vale ¢900, o item mais caro do jogo. Hoje só
 aparece por sorte e no festival. Virar projeto de temporada: planta no começo do

@@ -226,6 +226,11 @@ class Historia:
             Opcao("Dormir até amanhã", self.dormir, dica="fim do dia"),
             Opcao("Salvar e ir ao título", self.salvar_sair),
         ]
+        if e.abobora:
+            ops.insert(2, self.op(f"Cuidar da abóbora gigante · {e.peso_abobora()} kg",
+                                  self.cuidar_abobora, 1, ativa=not e.abobora_cuidada_hoje(),
+                                  dica="já cuidou hoje" if e.abobora_cuidada_hoje() else "",
+                                  icone="abobora"))
         return Tela(texto, ops, titulo=f"Fazenda Girassol · {e.nome}", som="", retrato="jogador")
 
     def ver_celeiro(self):
@@ -233,6 +238,13 @@ class Historia:
         total = sum(e.preco(i) * n for i, n in e.celeiro.items())
         return Tela(f"O celeiro velho range, mas guarda tudo direitinho. Se vendesse tudo hoje, daria uns ¢{total}.",
                     [Opcao("Voltar", self.menu_fazenda)], titulo="Celeiro", painel="celeiro")
+
+    def cuidar_abobora(self):
+        e = self.e
+        e.gastar_energia()
+        n = e.cuidar_abobora()
+        return self.menu_fazenda(f"Você rega, tira o mato e vira a abóbora para pegar sol. "
+                                 f"{n}º dia de cuidado — já está com {e.peso_abobora()} kg!")
 
     def menu_comer(self, msg=""):
         """Trocar comida por energia. Comer nao gasta acao, de proposito."""
