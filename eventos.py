@@ -1,7 +1,7 @@
 """Passeios (floresta, lago, vizinho) e eventos surpresa que acontecem de manhã."""
 import random
 
-from config import CULTURAS, ITENS
+from config import CULTURAS, ITENS, PESSOAS
 from estado import nome_item
 from tela import Opcao, Tela
 
@@ -135,6 +135,27 @@ def viajante(h, local):
                     Opcao("Pechinchar", pechinchar, dica="arriscado"),
                     Opcao("Recusar educadamente", lambda: voltar(h, "\"Como quiser...\" A neblina engole o viajante.")),
                 ], retrato="viajante", titulo="Viajante misterioso", local=local)
+
+
+def fogueira(h):
+    """Abertura do inverno: a vila inteira se junta na praça.
+
+    O inverno era a estação em que nada acontecia. Ele começa com a noite que
+    mais aproxima o jogador de todo mundo de uma vez.
+    """
+    e = h.e
+    for chave in PESSOAS:
+        e.mudar_amizade(chave, 3)
+
+    def ficar():
+        return Tela(h.xp(20, "Você fica até o fogo virar brasa, ouvindo história de gente que planta "
+                             "neste vale há mais tempo que você. Ninguém tem pressa. (+★20, +3 ♥ com todos)"),
+                    [Opcao("Voltar para casa", h.menu_fazenda)], local="festa", retrato="vovo",
+                    titulo="Fogueira de inverno", som="fanfarra")
+    return Tela("Bom dia! Chegou o inverno, e hoje à noite tem fogueira na praça: o vale inteiro leva "
+                "uma panela e senta em volta do fogo. A Vovó Cida guardou lugar para você.", [
+                    Opcao("Ir para a fogueira", ficar),
+                ], local="festa", retrato="vovo", titulo="Fogueira de inverno")
 
 
 # ---------------------------------------------------------------- o cachorro
@@ -291,6 +312,10 @@ def da_manha(h):
         return Tela(f"Bom dia! Tem uma carta na caixa do correio...\n\"{CARTAS[e.dia_do_ano]}\" - Vovó Cida",
                     [Opcao("Guardar a carta", h.menu_fazenda)], titulo="Carta da Vovó", retrato="vovo",
                     som="moeda" if e.dia_do_ano == 22 else "")
+    # dia 23, e nao 22: o 22 ja e dia de carta da Vovo, e a carta retorna antes
+    if e.dia_do_ano == 23 and e.flags.get("fogueira") != e.ano:
+        e.flags["fogueira"] = e.ano
+        return fogueira(h)
     if e.dia_do_ano == 21 and e.flags.get("festival") != e.ano:
         e.flags["festival"] = e.ano
         return festival(h)

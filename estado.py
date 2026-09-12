@@ -291,7 +291,11 @@ class Estado:
         self.mod_precos[self.em_alta] = 1.6
 
     def preco(self, item):
-        return max(1, round(ITENS[item][1] * self.mod_precos.get(item, 1.0) * self.bonus_venda()))
+        """O preco do dia. No inverno a vila paga mais por comida pronta: quem
+        cozinhou no outono colhe o resultado na estacao em que nada cresce."""
+        inverno = 1.20 if (self.estacao == "Inverno" and item in COMIDA and COMIDA[item] >= 2) else 1.0
+        return max(1, round(ITENS[item][1] * self.mod_precos.get(item, 1.0)
+                            * self.bonus_venda() * inverno))
 
     def bonus_venda(self):
         """Amizade com a Dona Lúcia melhora o preço no mercado dela."""
@@ -427,7 +431,9 @@ class Estado:
 
     # ------------------------------------------------------------ oficinas
     def receitas_disponiveis(self):
-        return [k for k, r in RECEITAS.items() if self.tem(r["predio"])]
+        """Algumas receitas so existem numa estacao: e o que da cara ao inverno."""
+        return [k for k, r in RECEITAS.items()
+                if self.tem(r["predio"]) and r.get("estacao", self.estacao) == self.estacao]
 
     def lotes_possiveis(self, chave):
         r = RECEITAS[chave]

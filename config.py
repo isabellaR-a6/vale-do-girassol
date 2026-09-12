@@ -104,6 +104,7 @@ ITENS = {
     "peixe_assado": ("Peixe assado", 170), "pao_de_milho": ("Pão de milho", 270),
     "torta": ("Torta de abóbora", 500), "manteiga": ("Manteiga", 340),
     "iogurte": ("Iogurte de morango", 430),
+    "bolo_fuba": ("Bolo de fubá", 300), "canjica": ("Canjica", 280),
     "abobora_gigante": ("Abóbora gigante", 900),
 }
 
@@ -120,8 +121,9 @@ COMIDA = {
     "abobora": 1, "trufa": 1,
     "pao": 2, "queijo": 2, "geleia": 2, "peixe_dourado": 2,
     "sopa": 2, "omelete": 2, "peixe_assado": 2, "pao_de_milho": 2,
-    "manteiga": 1, "iogurte": 2,
-    "bolo": 3, "torta": 3,
+    "manteiga": 1, "iogurte": 2, "canjica": 2,
+
+    "bolo": 3, "torta": 3, "bolo_fuba": 3,
 }
 
 # Quem mora no vale. "adora" e "odeia" sao chutes de personalidade e podem ser
@@ -190,6 +192,12 @@ RECEITAS = {
     "torta":    {"nome": "Torta de abóbora", "precisa": {"abobora": 1, "ovo": 2, "trigo": 2}, "faz": ("torta", 1), "predio": "padaria"},
     "manteiga": {"nome": "Manteiga", "precisa": {"leite": 3}, "faz": ("manteiga", 1), "predio": "laticinio"},
     "iogurte":  {"nome": "Iogurte de morango", "precisa": {"leite": 2, "morango": 1}, "faz": ("iogurte", 1), "predio": "laticinio"},
+    # so no inverno: a estacao em que nada cresce ganha o que so ela tem.
+    # O bolo de fuba e o da carta da Vovo Cida, que abre o jogo.
+    "bolo_fuba": {"nome": "Bolo de fubá da Vovó", "precisa": {"milho": 2, "ovo": 1, "leite": 1},
+                  "faz": ("bolo_fuba", 1), "predio": "cozinha", "estacao": "Inverno"},
+    "canjica":   {"nome": "Canjica", "precisa": {"milho": 3, "leite": 2},
+                  "faz": ("canjica", 1), "predio": "cozinha", "estacao": "Inverno"},
 }
 LOTES_POR_ACAO = 3  # quantas receitas você faz gastando 1 de energia
 

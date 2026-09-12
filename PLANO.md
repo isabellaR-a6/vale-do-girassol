@@ -107,7 +107,7 @@ Substitui a ideia de "carta". Uma tela só, de manhã, com:
 
 É também o **gancho do amanhã**: o jogador dorme sabendo que tem algo esperando.
 
-### O inverno como estação social
+### O inverno como estação social ✅ (12/09/2026)
 
 Hoje o inverno são **7 dias por ano em que nada cresce** sem estufa (¢900, nível 4).
 O jogador fica olhando terra congelada. Isso é um problema — ou uma oportunidade.

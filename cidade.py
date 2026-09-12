@@ -305,14 +305,17 @@ def conversar(h, chave):
     e = h.e
     d = PESSOAS[chave]
     e.marcar_visita(chave)
-    subiu = e.mudar_amizade(chave, 2)
+    # no inverno a vila fica em casa e a prosa rende mais: e a estacao social
+    inverno = e.estacao == "Inverno"
+    subiu = e.mudar_amizade(chave, 4 if inverno else 2)
     # conversar é também como se descobre o gosto: primeiro o que a pessoa ama
     revelou = ""
     for tipo, frase in (("adora", "comenta que adora {}"), ("odeia", "faz careta e diz que detesta {}")):
         if e.descobrir(chave, tipo):
             revelou = " " + d["nome"] + " " + frase.format(nome_item(d[tipo])) + "."
             break
-    msg = f"Vocês conversam um pouco.{revelou}"
+    msg = (f"O frio junta todo mundo perto do fogo, e a prosa rende.{revelou}" if inverno
+           else f"Vocês conversam um pouco.{revelou}")
     if subiu:
         msg += f" Vocês ficaram mais próximos! ({_cor(e, chave)})"
     return pessoa(h, chave, msg)
