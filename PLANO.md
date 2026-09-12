@@ -80,7 +80,7 @@ logo depois de escolher o nome), `estado.py` (guardar a aparência).
 
 ## A fila — depois, em cima de um jogo onde já dá pra respirar
 
-### Amizade por pessoa ✅ (12/09/2026)
+### Amizade por pessoa ✅ (12/09/2026) — com os prêmios, na segunda leva
 
 Hoje existe **uma** `reputacao` global. Mas o jogo tem **sete personagens com
 retrato**: Vovó Cida, Zé, Lúcia, Rosa, o viajante, o Prefeito Otávio e a Bia.
@@ -106,6 +106,38 @@ Substitui a ideia de "carta". Uma tela só, de manhã, com:
 - Avisos: festival chegando, o que a feira vai ter
 
 É também o **gancho do amanhã**: o jogador dorme sabendo que tem algo esperando.
+
+### O inverno como estação social
+
+Hoje o inverno são **7 dias por ano em que nada cresce** sem estufa (¢900, nível 4).
+O jogador fica olhando terra congelada. Isso é um problema — ou uma oportunidade.
+
+A ideia: em vez de "a estação em que não dá para jogar", virar **"a estação em que
+se joga diferente"**. O inverno é quando se cozinha, se visita as pessoas, se faz
+artesanato, se fica perto do fogo.
+
+Peças possíveis (não é para fazer todas):
+- Receitas que **só existem no inverno** (sopa quente, chocolate, conserva)
+- As pessoas ficam mais tempo em casa: conversar rende mais amizade
+- Um evento de fim de ano na praça, com fogueira
+- Trabalho de dentro de casa: tricô com a lã da ovelha, conserto de ferramentas
+- Vender conserva feita no outono por preço melhor no inverno
+
+O importante é que o jogador **queira** que chegue o inverno, em vez de aguentar.
+
+### Decorar a fazenda
+
+Depois que tudo está construído, dinheiro vira número. Falta **coisa cara e bonita
+para querer**: o que não dá lucro, dá gosto.
+
+- Cerca pintada, caminho de pedra, canteiro de flores, balanço na árvore,
+  espantalho, lampião, caixa de correio nova
+- Cada uma aparece no cenário desenhado (`cenario.py` já desenha a fazenda)
+- Sem efeito em dinheiro: efeito em **olhar para a própria fazenda e gostar**
+- Talvez um bônus pequeno de reputação, para o Concurso do fim do ano notar
+
+É o sumidouro de dinheiro que falta, e o motivo para continuar jogando depois de
+ter construído tudo que é útil.
 
 ### O trem (projeto de restauração)
 

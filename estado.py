@@ -5,7 +5,7 @@ import random
 import sys
 
 from config import (ANIMAIS, ARQUIVO_SAVE, CANTEIROS_INICIAIS, CLIMA_POR_ESTACAO, CONSTRUCOES,
-                    COMIDA, CORACOES_MAX, CULTURAS, DIAS_DO_ANO, DIAS_POR_ESTACAO, ENERGIA_BASE, ESTACOES, ITENS, PESSOAS, PONTOS_POR_CORACAO,
+                    BONUS_AMIZADE, COMIDA, CORACOES_MAX, CULTURAS, DIAS_DO_ANO, DIAS_POR_ESTACAO, ENERGIA_BASE, ESTACOES, ITENS, PESSOAS, PONTOS_POR_CORACAO,
                     NOME_CLIMA, RECEITAS, XP_NIVEIS, LOTES_POR_ACAO, WEB, ANDROID)
 
 if ANDROID:  # pasta privada do app: não é apagada quando o APK é atualizado
@@ -119,6 +119,31 @@ class Estado:
             return True
         return False
 
+    def perks_da_amizade(self):
+        """Os presentes que a amizade rende de manhã. Devolve frases para o relatório.
+
+        Sem isto o medidor de corações enche e não entrega nada — que é pior do
+        que não ter medidor nenhum.
+        """
+        rel = []
+        if self.coracoes("ze") >= 5 and any(c["cultura"] and not c["regado"] for c in self.canteiros):
+            for c in self.canteiros:
+                c["regado"] = True
+            rel.append("Seu Zé passou cedinho e regou seus canteiros. \"Vizinho é para essas coisas!\"")
+        elif self.coracoes("ze") >= 3 and random.random() < 0.35:
+            self.racao += 3
+            rel.append("Seu Zé deixou um saquinho de ração no portão.")
+        if self.coracoes("vovo") >= 3 and random.random() < 0.30:
+            mimo = random.choice(["bolo", "pao", "geleia"])
+            self.adicionar(mimo, 1)
+            rel.append(f"Chegou um embrulho da Vovó Cida: {ITENS[mimo][0].lower()}, ainda quentinho.")
+        c_bia = self.coracoes("bia")
+        if c_bia >= 3 and random.random() < (0.35 if c_bia >= 5 else 0.20):
+            achado = random.choice(["amora", "cogumelo", "trufa"] if c_bia >= 5 else ["amora", "cogumelo"])
+            self.adicionar(achado, 1)
+            rel.append(f"Bia passou correndo e te deu {ITENS[achado][0].lower()}: \"Achei e lembrei de você!\"")
+        return rel
+
     # ------------------------------------------------- a abobora gigante do ano
     SEMENTE_ABOBORA = 200
     FALTAS_ATE_MORRER = 3
@@ -178,7 +203,8 @@ class Estado:
 
     @property
     def energia_max(self):
-        return ENERGIA_BASE + (1 if self.tem("casa_reformada") else 0)
+        return (ENERGIA_BASE + (1 if self.tem("casa_reformada") else 0)
+                + (1 if self.coracoes("vovo") >= 5 else 0))
 
     def tem(self, construcao):
         return construcao in self.construcoes
@@ -237,7 +263,28 @@ class Estado:
         self.mod_precos[self.em_alta] = 1.6
 
     def preco(self, item):
-        return max(1, round(ITENS[item][1] * self.mod_precos.get(item, 1.0)))
+        return max(1, round(ITENS[item][1] * self.mod_precos.get(item, 1.0) * self.bonus_venda()))
+
+    def bonus_venda(self):
+        """Amizade com a Dona Lúcia melhora o preço no mercado dela."""
+        c = self.coracoes("lucia")
+        return 1.15 if c >= 5 else 1.08 if c >= 3 else 1.0
+
+    def desconto_obra(self):
+        """Amizade com a Rosa barateia o que sai da carpintaria."""
+        c = self.coracoes("rosa")
+        return 0.80 if c >= 5 else 0.90 if c >= 3 else 1.0
+
+    def bonus_pedido(self):
+        """Amizade com o Prefeito faz o quadro de pedidos pagar melhor."""
+        c = self.coracoes("prefeito")
+        return 1.20 if c >= 5 else 1.10 if c >= 3 else 1.0
+
+    def bonus_de(self, chave):
+        """O texto do que essa amizade já destravou e do que ainda falta."""
+        tabela = BONUS_AMIZADE.get(chave, {})
+        tenho = self.coracoes(chave)
+        return [(n, txt, tenho >= n) for n, txt in sorted(tabela.items())]
 
     def vender(self, item, n):
         n = min(n, self.qtd(item))
@@ -392,8 +439,10 @@ class Estado:
         p = self.pedidos.pop(idx)
         for i, n in p["itens"].items():
             self.remover(i, n)
-        self.dinheiro += p["moedas"]
-        self.stats["ganho"] += p["moedas"]
+        pago = round(p["moedas"] * self.bonus_pedido())
+        p = dict(p, moedas=pago)
+        self.dinheiro += pago
+        self.stats["ganho"] += pago
         self.stats["pedidos"] += 1
         self.reputacao += 1
         return p
@@ -463,6 +512,7 @@ class Estado:
             rel.append("Está chovendo: as plantações já amanheceram regadas, então sobrou uma ação no seu dia.")
         elif self.tem("irrigacao") and any(c["cultura"] for c in self.canteiros):
             rel.append("A irrigação regou tudo sozinha.")
+        rel += self.perks_da_amizade()
         frase = self.noite_da_abobora()
         if frase:
             rel.append(frase)

@@ -181,12 +181,14 @@ def comprar_canteiro(h):
 
 def construir(h, chave):
     c = CONSTRUCOES[chave]
+    preco = round(c["preco"] * h.e.desconto_obra())
+    amiga = " (preço de amiga!)" if preco < c["preco"] else ""
 
     def sim():
-        h.e.dinheiro -= c["preco"]
+        h.e.dinheiro -= preco
         h.e.construcoes.append(chave)
         return carpintaria(h, h.xp(25, f"Toc, toc, toc! {c['nome']} construído(a) na fazenda! (+★25)"))
-    return Tela(f"Rosa: \"{c['nome']}: {c['desc']} Fica ¢{c['preco']}. Fechado?\"",
+    return Tela(f"Rosa: \"{c['nome']}: {c['desc']} Fica ¢{preco}{amiga}. Fechado?\"",
                 [Opcao("Fechado! Pode construir", sim), Opcao("Vou pensar melhor", lambda: carpintaria(h))],
                 titulo="Carpintaria", local="cidade", retrato="rosa")
 
@@ -276,6 +278,9 @@ def pessoa(h, chave, msg=""):
             linhas.append(f"{verbo}: {nome_item(d[tipo])}.")
     if not e.sabe(chave, "adora") and not e.sabe(chave, "odeia"):
         linhas.append("Você ainda não sabe do que essa pessoa gosta.")
+    for n, txt, tem in e.bonus_de(chave):
+        # ■ conquistado, □ ainda não. A fonte não tem ✓ e trocaria por "?"
+        linhas.append(("■ " if tem else f"□ {n}♥ ") + txt)
     ja = e.ja_viu_hoje(chave)
     ops = [
         Opcao("Conversar", lambda: conversar(h, chave), ativa=not ja,

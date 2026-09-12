@@ -136,6 +136,20 @@ PESSOAS = {
     "prefeito": {"nome": "Prefeito Otávio", "adora": "pao", "odeia": "milho", "cliente": "o Prefeito", "aniversario": 25},
     "viajante": {"nome": "O viajante", "adora": "peixe_dourado", "odeia": "trigo", "cliente": None, "aniversario": 27},
 }
+# O que a amizade destrava. Sem isso o medidor enche e nao entrega nada, que e
+# pior do que nao ter medidor. O texto aparece na tela da pessoa: o jogador
+# precisa VER o que esta perseguindo.
+BONUS_AMIZADE = {
+    "lucia":    {3: "Vende no mercado por +8%", 5: "Vende no mercado por +15%"},
+    "rosa":     {3: "Construções 10% mais baratas", 5: "Construções 20% mais baratas"},
+    "prefeito": {3: "Pedidos do quadro pagam +10%", 5: "Pedidos do quadro pagam +20%"},
+    "vovo":     {3: "Ela manda comida: às vezes você acorda com um agrado",
+                 5: "Come tão bem que rende mais: +1 de energia por dia"},
+    "ze":       {3: "Ele reparte a ração dele de vez em quando",
+                 5: "Rega seus canteiros quando você esquece"},
+    "bia":      {3: "Ela te traz coisas que acha por aí", 5: "Traz coisas melhores, e mais vezes"},
+    "viajante": {3: "Aparece com mercadoria diferente", 5: "Guarda as raridades para você"},
+}
 PONTOS_POR_CORACAO = 10
 CORACOES_MAX = 5
 
