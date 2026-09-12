@@ -121,7 +121,15 @@ class Historia:
 
     def escolher_chapeu(self):
         return self._tela_ap("Alguma coisa na cabeça? O sol do vale não perdoa.", "chapeu",
-                             sprites.CHAPEUS, self.escolher_oculos, "Chapéu")
+                             sprites.CHAPEUS, self.escolher_brinco, "Na cabeça")
+
+    def escolher_brinco(self):
+        return self._tela_ap("Brinco?", "brinco",
+                             sprites.BRINCOS, self.escolher_colar, "Brinco")
+
+    def escolher_colar(self):
+        return self._tela_ap("E no pescoço?", "colar",
+                             sprites.COLARES, self.escolher_oculos, "Colar")
 
     def escolher_oculos(self):
         e = self.e

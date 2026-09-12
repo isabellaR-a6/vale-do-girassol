@@ -187,10 +187,16 @@ ESTILOS_CABELO = [("curto", "curto"), ("longo", "comprido"), ("coque", "coque"),
 ROUPAS = [("verde", COR["verde_ui"]), ("azul", COR["azul"]), ("vermelha", COR["vermelho_claro"]),
           ("amarela", COR["dourado"]), ("roxa", COR["roxo"]), ("rosa", COR["rosa"]),
           ("branca", COR["creme"]), ("marrom", COR["madeira"])]
-CHAPEUS = [("nenhum", None), ("palha", "palha"), ("bandana", "bandana")]
+CHAPEUS = [("nenhum", None), ("laço", "laco"), ("tiara", "tiara"), ("flor", "flor"),
+           ("palha", "palha"), ("bandana", "bandana"), ("dino", "dino")]
+BRINCOS = [("nenhum", None), ("dourado", COR["dourado"]), ("prata", COR["cinza"]),
+           ("pérola", COR["branco"]), ("rubi", COR["vermelho_claro"])]
+COLARES = [("nenhum", None), ("dourado", COR["dourado"]), ("prata", COR["cinza"]),
+           ("contas", COR["roxo_claro"]), ("girassol", COR["amarelo"])]
 
 APARENCIA_PADRAO = {"pele": "clara", "cabelo": "castanho", "estilo": "longo",
-                    "roupa": "verde", "chapeu": "nenhum", "oculos": False}
+                    "roupa": "verde", "chapeu": "nenhum", "oculos": False,
+                    "brinco": "nenhum", "colar": "nenhum"}
 
 
 def _escolha(lista, chave, reserva=0):
@@ -219,6 +225,17 @@ def definir_jogador(ap):
     chapeu = _escolha(CHAPEUS, ap.get("chapeu", "nenhum"))
     if chapeu:
         RETRATOS["jogador"]["chapeu"] = chapeu
+    brinco = _escolha(BRINCOS, ap.get("brinco", "nenhum"))
+    if brinco:
+        RETRATOS["jogador"]["brinco"] = brinco
+        RETRATOS["jogador"]["brinco_longo"] = ap.get("brinco") in ("pérola", "rubi")
+    colar = _escolha(COLARES, ap.get("colar", "nenhum"))
+    if colar:
+        RETRATOS["jogador"]["colar"] = colar
+        if ap.get("colar") == "girassol":
+            RETRATOS["jogador"]["pingente"] = COR["madeira_esc"]
+        elif ap.get("colar") == "contas":
+            RETRATOS["jogador"]["pingente"] = COR["roxo"]
     for k in [c for c in _cache if c[0] == "retrato" and c[1] == "jogador"]:
         del _cache[k]
 
@@ -258,7 +275,12 @@ def retrato(chave, escala=3):
     # cabelo de trás
     estilo = d.get("estilo")
     if estilo == "longo":
-        px(3, 3, 10, 10, cab)
+        # O bloco ia ate y=12 e cobria o pescoco: uma faixa de cabelo cheia logo
+        # abaixo do queixo le como barba. Agora ele para no queixo e o cabelo
+        # cai pelos lados, deixando o pescoco aparecer.
+        px(3, 3, 10, 9, cab)
+        px(2, 11, 2, 3, cab)
+        px(12, 11, 2, 3, cab)
     # rosto
     px(4, 3, 8, 9, pele)
     px(4, 3, 1, 1, cab if estilo != "careca" else d["fundo"])
@@ -311,11 +333,48 @@ def retrato(chave, escala=3):
         px(5, 0, 6, 3, COR["contorno"])
         px(5, 2, 6, 1, COR["vermelho"])
         px(3, 3, 10, 1, COR["contorno"])
+    elif chapeu == "laco":
+        px(10, 1, 2, 2, COR["rosa"])
+        px(13, 1, 2, 2, COR["rosa"])
+        px(12, 1, 1, 2, COR["vermelho_claro"])
+    elif chapeu == "tiara":
+        px(4, 1, 8, 1, COR["dourado"])
+        px(3, 2, 1, 2, COR["dourado"])
+        px(12, 2, 1, 2, COR["dourado"])
+        px(7, 0, 2, 1, COR["agua_clara"])
+    elif chapeu == "flor":
+        px(11, 1, 3, 3, COR["amarelo"])
+        px(12, 0, 1, 1, COR["amarelo"])
+        px(12, 4, 1, 1, COR["amarelo"])
+        px(12, 2, 1, 1, COR["madeira_esc"])
+    elif chapeu == "dino":
+        px(3, 1, 10, 3, COR["grama_esc"])
+        px(4, 0, 8, 1, COR["grama_esc"])
+        px(5, 0, 1, 1, COR["grama_clara"])
+        px(8, 0, 1, 1, COR["grama_clara"])
+        px(11, 0, 1, 1, COR["grama_clara"])
+        px(2, 3, 1, 1, COR["grama_esc"])
+        px(13, 3, 1, 1, COR["grama_esc"])
     elif chapeu == "capuz":
         px(3, 1, 10, 3, d["roupa"])
         px(4, 4, 8, 2, (80, 45, 95))
         px(6, 7, 1, 1, COR["amarelo"])
         px(9, 7, 1, 1, COR["amarelo"])
+    # brinco e colar vao por ultimo, para aparecerem por cima do cabelo e do chapeu
+    brinco = d.get("brinco")
+    if brinco:
+        px(3, 8, 1, 1, brinco)
+        px(12, 8, 1, 1, brinco)
+        if d.get("brinco_longo"):
+            px(3, 9, 1, 1, brinco)
+            px(12, 9, 1, 1, brinco)
+    colar = d.get("colar")
+    if colar:
+        px(5, 13, 6, 1, colar)
+        px(4, 12, 1, 1, colar)
+        px(11, 12, 1, 1, colar)
+        if d.get("pingente"):
+            px(7, 14, 2, 1, d["pingente"])
     img = pygame.transform.scale(s, (16 * escala, 16 * escala))
     _cache[ck] = img
     return img
