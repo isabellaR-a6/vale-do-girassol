@@ -147,14 +147,19 @@ para a **tag exata** do build.
 
 ## Passo 4 — Instalar no iPhone
 
-**Uma vez só, com cabo:**
+**Antes de tudo, e isso independe da conta descartável:**
 
-1. Baixar o [iloader](https://iloader.app) — MSI, no Windows
-2. Criar um **Apple ID descartável** em appleid.apple.com (janela anônima)
-3. iloader → login com a conta descartável → "Install SideStore (Stable)"
-4. No iPhone: Ajustes → Geral → VPN e Gerenciamento de Dispositivo → confiar
-5. Instalar o **LocalDevVPN** e conectar
-6. Abrir o SideStore, entrar com a conta descartável, tocar em "7 DAYS"
+1. Instalar o **LocalDevVPN** pela App Store normal ([link](https://apps.apple.com/us/app/localdevvpn/id6755608044)) — com a minha conta de sempre, não é sideload
+2. **Ajustes → Privacidade e Segurança → Modo de Desenvolvedor** → ligar. O iPhone reinicia.
+
+**Depois, uma vez só, com cabo:**
+
+3. Baixar o [iloader](https://iloader.app) — MSI, no Windows
+4. Criar um **Apple ID descartável** em appleid.apple.com (janela anônima)
+5. iloader → login com a conta descartável → selecionar o aparelho → "Install SideStore (Stable)"
+6. No iPhone: Ajustes → Geral → VPN e Gerenciamento de Dispositivo → tocar no nome da conta → **Confiar**
+7. Abrir o **LocalDevVPN** → Connect
+8. Abrir o SideStore, entrar com a conta descartável, tocar em "7 DAYS"
 
 **Nunca sair do iCloud nos Ajustes.** A conta descartável só é digitada
 dentro do iloader e do SideStore.
