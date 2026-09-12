@@ -309,14 +309,41 @@ def conversar(h, chave):
     return pessoa(h, chave, msg)
 
 
-def presentear(h, chave):
+POR_PAGINA = 8   # mais que isso e a lista vaza da caixa e cobre o cenario
+
+
+def presentear(h, chave, pag=0):
+    """O celeiro pode ter mais de 20 tipos de item, e a lista inteira nao cabe
+    na tela: ela vaza por cima do cenario. Entao vai em paginas, com o que a
+    pessoa adora sempre na frente.
+    """
     e = h.e
-    ops = [Opcao(f"{nome_item(i)} ({n})", lambda x=i: _dar(h, chave, x),
-                 dica=f"vale ¢{e.preco(i)}", icone=i)
-           for i, n in sorted(e.celeiro.items())]
+    d = PESSOAS[chave]
+    sabe_adora = e.sabe(chave, "adora")
+    sabe_odeia = e.sabe(chave, "odeia")
+
+    def ordem(kv):
+        return (0 if sabe_adora and kv[0] == d["adora"] else 1, -e.preco(kv[0]))
+
+    itens = sorted(e.celeiro.items(), key=ordem)
+    fatia = itens[pag * POR_PAGINA:(pag + 1) * POR_PAGINA]
+    ops = []
+    for i, n in fatia:
+        marca = ""
+        if sabe_adora and i == d["adora"]:
+            marca = " ♥"
+        elif sabe_odeia and i == d["odeia"]:
+            marca = " (ela detesta)"
+        ops.append(Opcao(f"{nome_item(i)} ({n}){marca}", lambda x=i: _dar(h, chave, x),
+                         dica=f"vale ¢{e.preco(i)}", icone=i))
+    if (pag + 1) * POR_PAGINA < len(itens):
+        ops.append(Opcao("Ver o resto do celeiro", lambda: presentear(h, chave, pag + 1)))
+    if pag:
+        ops.append(Opcao("Voltar os itens", lambda: presentear(h, chave, pag - 1)))
     ops.append(Opcao("Melhor não", lambda: pessoa(h, chave)))
-    return Tela("O que você tira da cesta?", ops,
-                titulo=f"Presente para {PESSOAS[chave]['nome']}", local="cidade",
+    quantos = f" ({pag * POR_PAGINA + 1}-{pag * POR_PAGINA + len(fatia)} de {len(itens)})" if len(itens) > POR_PAGINA else ""
+    return Tela(f"O que você tira da cesta?{quantos}", ops,
+                titulo=f"Presente para {d['nome']}", local="cidade",
                 retrato=chave, painel="celeiro")
 
 

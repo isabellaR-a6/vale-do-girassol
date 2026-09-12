@@ -247,16 +247,24 @@ class Historia:
         return self.menu_fazenda(f"Você rega, tira o mato e vira a abóbora para pegar sol. "
                                  f"{n}º dia de cuidado: já está com {e.peso_abobora()} kg!")
 
-    def menu_comer(self, msg=""):
+    def menu_comer(self, msg="", pag=0):
         """Trocar comida por energia. Comer nao gasta acao, de proposito."""
         e = self.e
+        # o celeiro pode ter quase 20 comidas: a lista inteira vaza da caixa
+        todas = e.comidas_no_celeiro()
+        POR_PAGINA = 8
+        fatia = todas[pag * POR_PAGINA:(pag + 1) * POR_PAGINA]
         ops = []
-        for item in e.comidas_no_celeiro():
+        for item in fatia:
             cabe = min(COMIDA[item], e.energia_max - e.energia)
             ops.append(Opcao(f"{nome_item(item)} ({e.qtd(item)})",
                              lambda i=item: self.comer(i),
                              dica=f"+⚡{cabe} · vale ¢{e.preco(item)}",
                              icone=item))
+        if (pag + 1) * POR_PAGINA < len(todas):
+            ops.append(Opcao("Ver o resto do celeiro", lambda: self.menu_comer(pag=pag + 1)))
+        if pag:
+            ops.append(Opcao("Voltar os itens", lambda: self.menu_comer(pag=pag - 1)))
         ops.append(Opcao("Agora não", self.menu_fazenda))
         partes = [f"Você tem ⚡{e.energia} de {e.energia_max}. "
                  "Comer não gasta ação: é assim que o dia rende mais.",
