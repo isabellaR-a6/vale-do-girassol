@@ -8,6 +8,23 @@ fila do que vem depois**, pra nenhuma ideia se perder.
 
 ---
 
+## Como retomar (inclusive de outra máquina)
+
+```bash
+git pull
+python main.py                    # jogar
+python tools/checar_texto.py      # antes de commitar texto: acusa o que virar "?"
+python tools/gerar_icone.py       # redesenha o ícone do app
+```
+
+**Antes de mexer, leia as pegadinhas no `CLAUDE.md`** — elas já custaram tempo:
+a fonte troca caractere desconhecido por "?" sem avisar, `j.ui.tela` não é
+`j.tela`, e tirar foto sem `ui.atualizar(dt)` sai com a caixa de diálogo vazia.
+
+**O que falta está em "A fila", mais abaixo.** As três do topo e quase tudo da
+fila saíram em 12/09/2026; sobraram o trem, as ferramentas e o teclado do
+Android.
+
 ## O diagnóstico
 
 O jogo não sofre de falta de conteúdo. Sofre de duas coisas medidas no código:
