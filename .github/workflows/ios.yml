@@ -120,10 +120,12 @@ jobs:
           "$PB" -c "Add :UISupportedInterfaceOrientations:0 string UIInterfaceOrientationLandscapeLeft" "$PL"
           "$PB" -c "Add :UISupportedInterfaceOrientations:1 string UIInterfaceOrientationLandscapeRight" "$PL"
 
-          # icone: reaproveita o que ja existe no repositorio para a versao web
-          if [ -f web/icone.png ]; then
-            sips -s format png -z 180 180 web/icone.png --out "$APP/AppIcon60x60@3x.png" >/dev/null 2>&1 || true
-            sips -s format png -z 120 120 web/icone.png --out "$APP/AppIcon60x60@2x.png" >/dev/null 2>&1 || true
+          # icone: copia os PNG ja prontos no tamanho exato (tools/gerar_icone.py).
+          # Antes isto usava 'sips -z' para redimensionar, e redimensionar pixel
+          # art borra os pixels. 180 e 120 sao multiplos exatos da grade 30x30.
+          if [ -f web/icone_180.png ] && [ -f web/icone_120.png ]; then
+            cp web/icone_180.png "$APP/AppIcon60x60@3x.png"
+            cp web/icone_120.png "$APP/AppIcon60x60@2x.png"
             "$PB" -c "Delete :CFBundleIconFiles" "$PL" 2>/dev/null || true
             "$PB" -c "Add :CFBundleIconFiles array" "$PL"
             "$PB" -c "Add :CFBundleIconFiles:0 string AppIcon60x60" "$PL"
