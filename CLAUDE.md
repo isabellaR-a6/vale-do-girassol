@@ -37,10 +37,21 @@ fonte bitmap e música chiptune **gerados em código** (sem imagens nem áudio e
 ## Como testar sem abrir janela
 
 Rodar com `SDL_VIDEODRIVER=dummy` e `SDL_AUDIODRIVER=dummy`, criar `main.Jogo()`, chamar `j.escolher(opcao)` /
-`j._desenhar(dt)` e salvar `j.tela` com `pygame.image.save`. Um "robô" escolhendo opções ativas aleatórias por milhares
+`j._desenhar(dt)` e salvar `j.tela` com `pygame.image.save`.
+
+Três pegadinhas que já custaram tempo:
+- A tela de escolhas atual é **`j.ui.tela`**, não `j.tela` (essa é a Surface do pygame).
+- Para trocar de tela use **`j._aplicar(tela)`**; atribuir `j.ui.tela` direto pula a preparação.
+- O texto aparece com efeito de máquina de escrever, e quem avança isso é **`j.ui.atualizar(dt)`**,
+  que o laço chama *antes* de `_desenhar`. Só desenhar deixa a caixa de diálogo vazia na foto.
+- `j.escolher` pode **trocar o objeto `Estado`** (novo jogo / continuar). Pegue `h.e` de novo depois. Um "robô" escolhendo opções ativas aleatórias por milhares
 de passos pega erros de lógica. Aponte `estado.CAMINHO_SAVE` para um arquivo temporário para não sobrescrever o save real.
 
 ## Pegadinhas conhecidas
+
+- **A fonte só conhece 87 caracteres, e o que falta vira `?` sem avisar** (`fonte.py:168`).
+  Não tem travessão (`—`), reticências (`…`) nem meia-risca. Use `-`, `:` ou `·`.
+  Acentos do português têm; `⚡ ¢ ★ ♥` são ícones tratados à parte e funcionam.
 
 - Web: clique sem movimento prévio chega com posição velha; por isso o toque usa `FINGERDOWN` com coordenadas 0–1.
 - O `save_fazenda.json` (progresso) não vai para o git; cada computador tem o seu.

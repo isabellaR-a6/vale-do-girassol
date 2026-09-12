@@ -3,7 +3,7 @@ import random
 
 import cidade
 import eventos
-from config import ANIMAIS, CULTURAS, RECEITAS, WEB
+from config import ANIMAIS, COMIDA, CULTURAS, RECEITAS, WEB
 from estado import Estado, nome_item
 from tela import Opcao, Tela
 
@@ -133,6 +133,10 @@ class Historia:
             Opcao("Usar as oficinas", self.menu_oficinas, ativa=bool(e.receitas_disponiveis()),
                   dica="" if e.receitas_disponiveis() else "construa uma"),
             Opcao("Espiar o celeiro", self.ver_celeiro),
+            Opcao("Comer alguma coisa", self.menu_comer,
+                  ativa=bool(e.comidas_no_celeiro()) and e.energia < e.energia_max,
+                  dica=("celeiro vazio" if not e.comidas_no_celeiro()
+                        else "de barriga cheia" if e.energia >= e.energia_max else "+⚡")),
             Opcao("Sair da fazenda", self.menu_passeio),
             Opcao("Dormir até amanhã", self.dormir, dica="fim do dia"),
             Opcao("Salvar e ir ao título", self.salvar_sair),
@@ -144,6 +148,37 @@ class Historia:
         total = sum(e.preco(i) * n for i, n in e.celeiro.items())
         return Tela(f"O celeiro velho range, mas guarda tudo direitinho. Se vendesse tudo hoje, daria uns ¢{total}.",
                     [Opcao("Voltar", self.menu_fazenda)], titulo="Celeiro", painel="celeiro")
+
+    def menu_comer(self, msg=""):
+        """Trocar comida por energia. Comer nao gasta acao, de proposito."""
+        e = self.e
+        ops = []
+        for item in e.comidas_no_celeiro():
+            cabe = min(COMIDA[item], e.energia_max - e.energia)
+            ops.append(Opcao(f"{nome_item(item)} ({e.qtd(item)})",
+                             lambda i=item: self.comer(i),
+                             dica=f"+⚡{cabe} · vale ¢{e.preco(item)}",
+                             icone=item))
+        ops.append(Opcao("Agora não", self.menu_fazenda))
+        partes = [f"Você tem ⚡{e.energia} de {e.energia_max}. "
+                 "Comer não gasta ação: é assim que o dia rende mais.",
+                 "Só que o que você come não vai para o mercado."]
+        if msg:
+            partes.insert(0, msg)
+        texto = chr(10).join(partes)
+        return Tela(texto, ops, titulo="Comer", local="fazenda", painel="celeiro")
+
+    def comer(self, item):
+        e = self.e
+        nome = nome_item(item)
+        ganho = e.comer(item)
+        if ganho:
+            msg = f"Você comeu {nome} e recuperou ⚡{ganho}."
+        else:
+            msg = f"Você olha {nome}, mas não está com fome nenhuma. Melhor guardar."
+        if e.comidas_no_celeiro() and e.energia < e.energia_max:
+            return self.menu_comer(msg)
+        return self.menu_fazenda(msg)
 
     def salvar_sair(self):
         self.e.salvar()

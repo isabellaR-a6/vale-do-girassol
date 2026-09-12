@@ -66,7 +66,7 @@ ESTACOES = ["Primavera", "Verão", "Outono", "Inverno"]
 DIAS_POR_ESTACAO = 7
 DIAS_DO_ANO = DIAS_POR_ESTACAO * 4
 
-ENERGIA_BASE = 5
+ENERGIA_BASE = 7
 CANTEIROS_INICIAIS = 4
 CANTEIROS_MAX = 8
 PACOTE_RACAO = (10, 40)  # (quantidade, preço)
@@ -99,6 +99,21 @@ ITENS = {
     "amora": ("Amora", 15), "cogumelo": ("Cogumelo", 40),
     "lambari": ("Lambari", 20), "tilapia": ("Tilápia", 50), "peixe_dourado": ("Peixe dourado", 350),
     "abobora_gigante": ("Abóbora gigante", 900),
+}
+
+# Comer devolve energia, e comer nao gasta acao. E daqui que vem o folego do
+# dia: o jogador troca colheita por tempo. Comida da roca devolve 1; comida
+# feita nas oficinas devolve mais, que e o que faz o moinho e a padaria
+# valerem a pena.
+#
+# O pao e de longe o mais eficiente: 3 trigos (¢84) viram ¢110 e +2 de energia.
+# A geleia vale ¢480 e devolve so 2 de proposito — ela existe para vender.
+COMIDA = {
+    "amora": 1, "ovo": 1, "lambari": 1, "cogumelo": 1, "cenoura": 1,
+    "tilapia": 1, "milho": 1, "leite": 1, "tomate": 1, "morango": 1,
+    "abobora": 1, "trufa": 1,
+    "pao": 2, "queijo": 2, "geleia": 2, "peixe_dourado": 2,
+    "bolo": 3,
 }
 
 CONSTRUCOES = {

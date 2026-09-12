@@ -5,7 +5,7 @@ import random
 import sys
 
 from config import (ANIMAIS, ARQUIVO_SAVE, CANTEIROS_INICIAIS, CLIMA_POR_ESTACAO, CONSTRUCOES,
-                    CULTURAS, DIAS_DO_ANO, DIAS_POR_ESTACAO, ENERGIA_BASE, ESTACOES, ITENS,
+                    COMIDA, CULTURAS, DIAS_DO_ANO, DIAS_POR_ESTACAO, ENERGIA_BASE, ESTACOES, ITENS,
                     NOME_CLIMA, RECEITAS, XP_NIVEIS, LOTES_POR_ACAO, WEB, ANDROID)
 
 if ANDROID:  # pasta privada do app: não é apagada quando o APK é atualizado
@@ -108,6 +108,24 @@ class Estado:
 
     def gastar_energia(self, n=1):
         self.energia = max(0, self.energia - n)
+
+    def comidas_no_celeiro(self):
+        """O que da para comer agora, do mais fraco para o mais forte."""
+        return sorted((i for i in self.celeiro if i in COMIDA), key=lambda i: COMIDA[i])
+
+    def comer(self, item):
+        """Come um item e devolve quanta energia entrou de verdade.
+
+        Comer nao gasta acao: a graca e justamente trocar comida por tempo.
+        Mas a energia nao passa do maximo do dia, entao comer de barriga cheia
+        desperdica — o jogador precisa gastar antes de repor.
+        """
+        ganho = min(COMIDA[item], self.energia_max - self.energia)
+        if ganho <= 0:
+            return 0          # de barriga cheia nao gasta a comida a toa
+        self.remover(item, 1)
+        self.energia += ganho
+        return ganho
 
     def ganhar_xp(self, n):
         """Dá XP e devolve uma mensagem se subiu de nível."""
@@ -351,7 +369,7 @@ class Estado:
         for c in self.canteiros:
             c["regado"] = chuva or self.tem("irrigacao")
         if chuva:
-            rel.append("Está chovendo: as plantações já amanheceram regadas.")
+            rel.append("Está chovendo: as plantações já amanheceram regadas, então sobrou uma ação no seu dia.")
         elif self.tem("irrigacao") and any(c["cultura"] for c in self.canteiros):
             rel.append("A irrigação regou tudo sozinha.")
         self.gerar_pedidos()
