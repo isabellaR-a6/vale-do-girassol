@@ -5,7 +5,7 @@ import random
 import sys
 
 from config import (ANIMAIS, ARQUIVO_SAVE, CANTEIROS_INICIAIS, CLIMA_POR_ESTACAO, CONSTRUCOES,
-                    BONUS_AMIZADE, COMIDA, CORACOES_MAX, CULTURAS, DIAS_DO_ANO, DIAS_POR_ESTACAO, ENERGIA_BASE, ESTACOES, ITENS, PESSOAS, PONTOS_POR_CORACAO,
+                    BONUS_AMIZADE, COMIDA, CORACOES_MAX, CULTURAS, DECORACOES, DIAS_DO_ANO, DIAS_POR_ESTACAO, ENERGIA_BASE, ESTACOES, ITENS, PESSOAS, PONTOS_POR_CORACAO,
                     NOME_CLIMA, RECEITAS, XP_NIVEIS, LOTES_POR_ACAO, WEB, ANDROID)
 
 if ANDROID:  # pasta privada do app: não é apagada quando o APK é atualizado
@@ -57,6 +57,7 @@ class Estado:
         self.presentes = {}       # chave -> dias em que voce presenteou
         self.sabidos = []         # "chave:adora" / "chave:odeia" ja descobertos
         self.abobora = None       # projeto da abobora gigante do ano: {"cuidados", "faltas", "regada"}
+        self.decoracoes = []      # enfeites comprados: aparecem no cenario
         self.sortear_precos()
         self.gerar_pedidos()
 
@@ -574,6 +575,7 @@ class Estado:
     def patrimonio(self):
         total = self.dinheiro
         total += sum(CONSTRUCOES[c]["preco"] // 2 for c in self.construcoes)
+        total += sum(DECORACOES[d]["preco"] // 2 for d in self.decoracoes)
         total += sum(ANIMAIS[a["tipo"]]["preco"] // 2 for a in self.animais)
         total += sum(ITENS[i][1] * n for i, n in self.celeiro.items())
         total += (len(self.canteiros) - CANTEIROS_INICIAIS) * 80

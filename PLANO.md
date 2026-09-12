@@ -125,7 +125,7 @@ Peças possíveis (não é para fazer todas):
 
 O importante é que o jogador **queira** que chegue o inverno, em vez de aguentar.
 
-### Decorar a fazenda
+### Decorar a fazenda ✅ (12/09/2026)
 
 Depois que tudo está construído, dinheiro vira número. Falta **coisa cara e bonita
 para querer**: o que não dá lucro, dá gosto.
@@ -138,6 +138,23 @@ para querer**: o que não dá lucro, dá gosto.
 
 É o sumidouro de dinheiro que falta, e o motivo para continuar jogando depois de
 ter construído tudo que é útil.
+
+### ⚠ Teclado no Android: não dá para digitar no APK
+
+**Achado pela Isabella jogando o APK.** No celular o teclado do sistema não abre,
+então nenhuma tela de digitar funciona. Na web isso já estava resolvido
+(`interface.py:107` abre a caixinha do navegador, que chama o teclado); no APK
+não existe navegador nenhum.
+
+**O pior já foi contornado (12/09):** as quatro telas que pedem texto agora têm
+alternativa sem teclado. A de batizar animal comprado na feira era a única sem
+saída além de "Desistir" — ela travava a feira inteira no celular, e ganhou três
+nomes sorteados. O APK é jogável do começo ao fim; só não dá nome próprio.
+
+**O conserto de verdade** precisa de código Android nativo (pyjnius chamando o
+teclado do sistema, ou o hint do SDL). Está na fila e não no "feito" por um
+motivo honesto: **não dá para testar sem device**, e cada tentativa é uma build
+de 30 minutos. É trabalho de sentar com o celular na mão.
 
 ### O trem (projeto de restauração)
 

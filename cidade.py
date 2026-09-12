@@ -1,7 +1,8 @@
 """A cidade do vale: mercado, feira de animais, carpintaria, pedidos e café."""
 import random
 
-from config import (ANIMAIS, CANTEIROS_MAX, CONSTRUCOES, PACOTE_RACAO, PESSOAS, canteiro_preco)
+from config import (ANIMAIS, CANTEIROS_MAX, CONSTRUCOES, DECORACOES, PACOTE_RACAO, PESSOAS,
+                    canteiro_preco)
 from estado import nome_item
 from tela import Opcao, Tela
 
@@ -138,15 +139,30 @@ def feira(h, msg=""):
     return Tela(texto, ops, titulo="Feira de animais", local="cidade", retrato="ze")
 
 
+NOMES_BICHO = ["Pipoca", "Jujuba", "Nuvem", "Pingo", "Farofa", "Bolota", "Maré", "Trovão",
+               "Amora", "Canela", "Fubá", "Quindim", "Dengo", "Salsicha", "Cometa"]
+
+
 def nomear(h, tipo):
+    """Batizar o bicho novo.
+
+    Os tres nomes sorteados nao sao enfeite: no Android o teclado nao abre, e
+    esta era a unica tela de digitar sem alternativa — comprava o animal e a
+    unica saida era desistir, o que travava a feira inteira no celular.
+    """
     nome = ANIMAIS[tipo]["nome"].lower()
+    usados = {a["nome"] for a in h.e.animais}
 
     def confirmar(apelido):
         h.e.comprar_animal(tipo, apelido[:12])
         return feira(h, h.xp(10, f"{apelido} agora mora na Fazenda Girassol! (+★10)"))
-    return Tela(f"Que nome você dá para a sua nova {nome}?" if tipo in ("galinha", "vaca", "ovelha")
+
+    livres = [n for n in NOMES_BICHO if n not in usados] or NOMES_BICHO
+    ops = [Opcao(n, lambda x=n: confirmar(x)) for n in random.sample(livres, k=min(3, len(livres)))]
+    ops.append(Opcao("Desistir", lambda: feira(h)))
+    return Tela(f"Que nome você dá para a sua nova {nome}?" if tipo in ("galinha", "vaca", "ovelha", "cabra")
                 else f"Que nome você dá para o seu novo {nome}?",
-                [Opcao("Desistir", lambda: feira(h))], titulo="Batizado", local="cidade",
+                ops, titulo="Batizado", local="cidade",
                 retrato="ze", entrada=confirmar)
 
 
@@ -165,7 +181,12 @@ def carpintaria(h, msg=""):
         if c["nivel"] > e.nivel:
             ops.append(Opcao(c["nome"], lambda: carpintaria(h), False, f"nível {c['nivel']}"))
         else:
-            ops.append(Opcao(c["nome"], lambda k=chave: construir(h, k), e.dinheiro >= c["preco"], f"¢{c['preco']}"))
+            # o preco ja sai com o desconto da Rosa: antes a lista mostrava cheio
+            # e o desconto so aparecia na hora de confirmar
+            pr = round(c["preco"] * e.desconto_obra())
+            ops.append(Opcao(c["nome"], lambda k=chave: construir(h, k), e.dinheiro >= pr, f"¢{pr}"))
+    ops.append(Opcao("Enfeitar a fazenda", lambda: enfeites(h),
+                     dica=f"{len(e.decoracoes)} de {len(DECORACOES)}"))
     ops.append(Opcao("Voltar à praça", lambda: praca(h)))
     texto = (msg + "\n" if msg else "") + \
         "Rosa: \"Serragem, martelo e boa vontade! O que vamos construir na sua fazenda?\""
@@ -191,6 +212,37 @@ def construir(h, chave):
     return Tela(f"Rosa: \"{c['nome']}: {c['desc']} Fica ¢{preco}{amiga}. Fechado?\"",
                 [Opcao("Fechado! Pode construir", sim), Opcao("Vou pensar melhor", lambda: carpintaria(h))],
                 titulo="Carpintaria", local="cidade", retrato="rosa")
+
+
+# ---------------------------------------------------------------- enfeites
+def enfeites(h, msg=""):
+    """Coisas que nao dao lucro, so gosto.
+
+    Depois que tudo util esta construido, dinheiro vira numero. Aqui ele volta a
+    ter para onde ir — e o resultado aparece na fazenda, nao na planilha.
+    """
+    e = h.e
+    ops = []
+    for chave, d in DECORACOES.items():
+        tem = chave in e.decoracoes
+        ops.append(Opcao(d["nome"], lambda c=chave: comprar_enfeite(h, c),
+                         ativa=not tem and e.dinheiro >= d["preco"],
+                         dica="já tem" if tem else f"¢{d['preco']}"))
+    ops.append(Opcao("Voltar à carpintaria", lambda: carpintaria(h)))
+    faltam = len(DECORACOES) - len(e.decoracoes)
+    texto = ((msg + NL if msg else "")
+             + "Rosa: \"Isso aqui não rende nada, viu? É só para a fazenda ficar bonita "
+               "e você gostar de olhar para ela.\""
+             + (NL + f"Faltam {faltam} enfeite(s)." if faltam else NL + "Sua fazenda está completa!"))
+    return Tela(texto, ops, titulo="Enfeites", local="cidade", retrato="rosa")
+
+
+def comprar_enfeite(h, chave):
+    e = h.e
+    d = DECORACOES[chave]
+    e.dinheiro -= d["preco"]
+    e.decoracoes.append(chave)
+    return enfeites(h, h.xp(12, f"{d['nome']}: pronto! {d['desc']} (+★12)"))
 
 
 # ---------------------------------------------------------------- pedidos

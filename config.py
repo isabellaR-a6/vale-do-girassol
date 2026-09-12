@@ -176,6 +176,22 @@ CONSTRUCOES = {
                   "desc": "Permite plantar e colher mesmo no inverno."},
 }
 
+# Enfeites: nao dao lucro, dao gosto. E o sumidouro de dinheiro que faltava
+# depois que tudo util esta construido. Cada um aparece no cenario da fazenda e
+# entra no patrimonio, entao o Concurso do fim do ano nota o capricho.
+DECORACOES = {
+    "flores":     {"nome": "Canteiro de flores", "preco": 220,
+                   "desc": "Um tapete de flores do lado da casa."},
+    "correio":    {"nome": "Caixa de correio nova", "preco": 260,
+                   "desc": "Pintada à mão, com um girassol na tampa."},
+    "espantalho": {"nome": "Espantalho", "preco": 300,
+                   "desc": "Chapéu velho, sorriso torto e nenhum pássaro por perto."},
+    "lampiao":    {"nome": "Lampião no caminho", "preco": 380,
+                   "desc": "A trilha acesa quando a noite cai."},
+    "balanco":    {"nome": "Balanço na árvore", "preco": 450,
+                   "desc": "Para sentar e olhar a fazenda de longe."},
+}
+
 RECEITAS = {
     "racao_trigo": {"nome": "Ração de trigo", "precisa": {"trigo": 1}, "faz": ("racao", 5), "predio": "moinho"},
     "racao_milho": {"nome": "Ração de milho", "precisa": {"milho": 1}, "faz": ("racao", 8), "predio": "moinho"},

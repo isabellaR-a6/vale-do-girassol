@@ -126,6 +126,50 @@ def galinheiro(s, x, base, grande, neve):
 
 
 # ---------------------------------------------------------------- canteiros e animais
+def enfeites(s, e, t):
+    """Os enfeites comprados na carpintaria.
+
+    Ficam na parte animada e nao no fundo em cache: assim o enfeite novo aparece
+    na hora, sem depender de a chave do cache mudar.
+    """
+    tem = e.decoracoes
+    if "flores" in tem:
+        # y abaixo de ~100 fica atras da caixa de dialogo e nao se ve
+        for i, x in enumerate(range(6, 42, 5)):
+            y = 88 + (i % 2)
+            s.fill(COR["folha"], (x + 1, y + 2, 1, 3))
+            cor = (COR["vermelho_claro"], COR["amarelo"], COR["rosa"], COR["roxo_claro"])[i % 4]
+            s.fill(cor, (x, y, 3, 2))
+            s.fill(COR["creme"], (x + 1, y, 1, 1))
+    if "correio" in tem:
+        s.fill(COR["madeira_esc"], (48, 96, 2, 10))
+        s.fill(COR["contorno"], (43, 89, 12, 8))
+        s.fill(COR["verde_ui"], (44, 90, 10, 6))
+        s.fill(COR["dourado"], (48, 92, 2, 2))
+        s.fill(COR["madeira_esc"], (48, 92, 1, 1))
+    if "lampiao" in tem:
+        s.fill(COR["contorno"], (68, 88, 2, 16))
+        s.fill(COR["contorno"], (65, 82, 8, 7))
+        aceso = COR["amarelo"] if int(t * 2) % 8 else COR["dourado"]
+        s.fill(aceso, (66, 83, 6, 5))
+        s.fill(COR["creme"], (67, 84, 2, 2))
+    if "espantalho" in tem:
+        s.fill(COR["madeira_esc"], (183, 80, 2, 14))
+        s.fill(COR["madeira_esc"], (176, 84, 16, 2))
+        s.fill(COR["pergaminho_esc"], (179, 74, 10, 7))
+        s.fill(COR["contorno"], (181, 76, 1, 1))
+        s.fill(COR["contorno"], (186, 76, 1, 1))
+        s.fill(COR["vermelho"], (182, 78, 4, 1))
+        s.fill(COR["dourado"], (177, 70, 14, 4))
+        s.fill(COR["vermelho_claro"], (177, 72, 14, 1))
+    if "balanco" in tem:
+        balanca = int(t * 1.5) % 2
+        x = 44 + balanca
+        s.fill(COR["madeira_clara"], (x, 56, 1, 8))
+        s.fill(COR["madeira_clara"], (x + 8, 56, 1, 8))
+        s.fill(COR["madeira"], (x - 1, 64, 11, 2))
+
+
 def canteiro(s, i, c, e, t):
     x, y = PLOTS[i]
     congelado = e.estacao == "Inverno" and not e.tem("estufa")
@@ -298,6 +342,9 @@ class Cenario:
             d.fumaca(s, 118, 32, t + 0.5)
         for i in range(8):
             canteiro(s, i, e.canteiros[i] if i < len(e.canteiros) else None, e, t)
+        # depois dos canteiros: desenhados antes, o canteiro passava por cima e
+        # cortava a cara do espantalho
+        enfeites(s, e, t)
         self.rebanho.atualizar(e, dt)
         self.rebanho.desenhar(s, e, t)
         x0, _, x1, y1 = CURRAL
