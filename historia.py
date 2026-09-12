@@ -215,6 +215,7 @@ class Historia:
             Opcao("Usar as oficinas", self.menu_oficinas, ativa=bool(e.receitas_disponiveis()),
                   dica="" if e.receitas_disponiveis() else "construa uma"),
             Opcao("Espiar o celeiro", self.ver_celeiro),
+            Opcao("Abrir a caderneta do vale", lambda: cidade.caderneta(self), dica="de graça"),
             Opcao(f"Fazer carinho em {e.cachorro}" if e.cachorro else "Fazer carinho no cachorro",
                   lambda: eventos.carinho(self), ativa=bool(e.cachorro) and e.flags.get("carinho") != e.dia,
                   dica=("já fez hoje" if e.flags.get("carinho") == e.dia else "de graça") if e.cachorro else "você não tem um"),

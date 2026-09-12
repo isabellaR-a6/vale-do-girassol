@@ -344,3 +344,39 @@ def _dar(h, chave, item):
     if subiu:
         msg += " Vocês ficaram mais próximos!"
     return pessoa(h, chave, msg)
+
+
+# ------------------------------------------------- caderneta (só de olhar)
+def caderneta(h, msg=""):
+    """Tudo que você já sabe sobre o vale, de graça e sem sair de casa.
+
+    A lista de gente na praça custa a ação de ir à cidade e só mostra coração.
+    Aqui o jogador confere gosto, aniversário e o que falta destravar antes de
+    decidir o que levar na cesta.
+    """
+    e = h.e
+    ops = []
+    for chave, d in PESSOAS.items():
+        falta = next((f"falta {n}♥" for n, _, tem in e.bonus_de(chave) if not tem), "tudo destravado")
+        ops.append(Opcao(f"{d['nome']} {_cor(e, chave)}", lambda c=chave: caderneta_pessoa(h, c),
+                         dica=f"dia {d['aniversario']} · {falta}"))
+    ops.append(Opcao("Fechar a caderneta", h.menu_fazenda))
+    sabidos = sum(1 for c in PESSOAS for tp in ("adora", "odeia") if e.sabe(c, tp))
+    texto = ((msg + NL if msg else "")
+             + "Sua caderneta do vale, com tudo que você foi descobrindo sobre as pessoas daqui."
+             + NL + f"Você já sabe {sabidos} de {len(PESSOAS) * 2} gostos. A fofoca do jornal revela um por dia.")
+    return Tela(texto, ops, titulo="Caderneta do vale", local="fazenda")
+
+
+def caderneta_pessoa(h, chave):
+    e = h.e
+    d = PESSOAS[chave]
+    linhas = [f"{d['nome']} · {_cor(e, chave)}",
+              f"Aniversário: dia {d['aniversario']} do ano (presente vale em dobro)."]
+    for tipo, verbo in (("adora", "Adora"), ("odeia", "Não suporta")):
+        linhas.append(f"{verbo}: {nome_item(d[tipo])}." if e.sabe(chave, tipo)
+                      else f"{verbo}: ainda não descobri.")
+    for n, txt, tem in e.bonus_de(chave):
+        linhas.append(("■ " if tem else f"□ {n}♥ ") + txt)
+    return Tela(NL.join(linhas), [Opcao("Voltar para a caderneta", lambda: caderneta(h))],
+                titulo=d["nome"], local="fazenda", retrato=chave)
