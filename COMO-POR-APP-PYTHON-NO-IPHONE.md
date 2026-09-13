@@ -201,3 +201,56 @@ Só precisa existir um por repositório.
 **Não usar o CI como ciclo de desenvolvimento.** 25 minutos por tentativa é
 insuportável. Testo no notebook, em segundos, e só mando para o CI quando já
 está do jeito que quero.
+
+---
+
+# ONDE PAREI (13/09/2026, 01:30)
+
+**Feito e que não precisa refazer:**
+
+- Apple ID descartável criado e funcionando (`isabellaradael04@gmail.com`)
+- Número confiável registrado: celular da mãe, recebe SMS
+- "Dispositivos Apple" instalado no notebook (era o que faltava para o cabo
+  funcionar — o erro era `Failed to connect to usbmuxd`)
+- **SideStore instalado no iPhone**, com o arquivo de pareamento no lugar
+- Modo de Desenvolvedor ligado, perfil confiado, LocalDevVPN conectada
+- Os dois `.ipa` compilados e no ar (Vale build-6, Cabo de Guerra build-5)
+
+**O que falta: um login.** Só isso. No iPhone, sem cabo e sem notebook.
+
+A Apple bloqueou por excesso de tentativas (429 à tarde, 503 à noite). Isso
+solta sozinho — é esperar e tentar **uma vez**, com alguém de olho no celular
+que recebe o SMS.
+
+## Passo a passo do que falta
+
+1. Abrir o **SideStore** → **Settings** → entrar com a conta descartável
+2. Quando pedir o código, alguém lê o SMS e você digita
+3. Na aba **My Apps**, tocar em **Refresh All**
+4. Aba **Sources** → botão **+** → adicionar as duas fontes:
+   - `https://raw.githubusercontent.com/isabellaR-a6/vale-do-girassol/main/source.json`
+   - `https://raw.githubusercontent.com/isabellaR-a6/click/main/source.json`
+   - As duas aparecem como "Jogos da Isabella" (mesmo nome; está na fila para arrumar)
+5. Aba **Browse** → tocar no jogo → **Install**
+
+## Se der errado
+
+| O que aparece | O que fazer |
+|---|---|
+| 429 ou 503 | É a Apple segurando por excesso de tentativa. Parar e esperar. Cada tentativa a mais aumenta a espera. |
+| App não abre, "Untrusted" | Ajustes → Geral → VPN e Gerenciamento de Dispositivo → Confiar |
+| Falha ao instalar | Conferir se a **LocalDevVPN está conectada**. É o erro mais comum. |
+| Jogo não aparece na fonte | Puxar a tela para baixo para atualizar |
+
+## Depois que estiver funcionando
+
+- **Cada app expira em 7 dias.** O SideStore tenta renovar sozinho com a VPN
+  ligada, mas o iOS corta tarefa em segundo plano — conte com abrir e tocar em
+  **Refresh All** uma vez por semana. Vencer não apaga nada: renova e volta com
+  o save intacto.
+- **Limite de 3 apps** ao mesmo tempo, e **o SideStore conta como um**. Então
+  cabem ele + 2 jogos. Para um terceiro jogo, apagar um (o save daquele se perde).
+  Há também um limite de 10 apps novos por semana.
+- **Atualizar um jogo:** `git push` → a CI compila em uns 15 minutos → o
+  `source.json` se atualiza sozinho → no iPhone aparece **Update** no SideStore.
+  Um toque. Sem cabo, sem notebook, sem código.

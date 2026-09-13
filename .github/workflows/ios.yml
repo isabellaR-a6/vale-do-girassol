@@ -10,6 +10,11 @@ name: Build iOS (.ipa sem assinatura)
 on:
   push:
     branches: [main]
+    # mexer so em texto nao muda o .ipa: sem isto, cada correcao de documentacao
+    # gastava uns 20 minutos de Actions para gerar um app identico
+    paths-ignore:
+      - "**.md"
+      - "PLANO.md"
   workflow_dispatch:
 
 permissions:
