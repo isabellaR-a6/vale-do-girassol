@@ -16,12 +16,12 @@
       },
       "versions": [
         {
-          "version": "1.0.4",
-          "buildVersion": "4",
-          "date": "2026-09-12",
-          "downloadURL": "https://github.com/isabellaR-a6/vale-do-girassol/releases/download/build-4/vale-do-girassol.ipa",
-          "size": 29947262,
-          "localizedDescription": "Build 4.",
+          "version": "1.0.6",
+          "buildVersion": "6",
+          "date": "2026-09-13",
+          "downloadURL": "https://github.com/isabellaR-a6/vale-do-girassol/releases/download/build-6/vale-do-girassol.ipa",
+          "size": 29946279,
+          "localizedDescription": "Build 6.",
           "minOSVersion": "15.0"
         }
       ]
