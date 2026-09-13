@@ -156,7 +156,7 @@ para querer**: o que não dá lucro, dá gosto.
 É o sumidouro de dinheiro que falta, e o motivo para continuar jogando depois de
 ter construído tudo que é útil.
 
-### ⚠ Teclado no Android: não dá para digitar no APK
+### ⚠ Teclado no celular: não dá para digitar no APK (e talvez no iPhone)
 
 **Achado pela Isabella jogando o APK.** No celular o teclado do sistema não abre,
 então nenhuma tela de digitar funciona. Na web isso já estava resolvido
@@ -168,10 +168,15 @@ alternativa sem teclado. A de batizar animal comprado na feira era a única sem
 saída além de "Desistir" — ela travava a feira inteira no celular, e ganhou três
 nomes sorteados. O APK é jogável do começo ao fim; só não dá nome próprio.
 
-**O conserto de verdade** precisa de código Android nativo (pyjnius chamando o
-teclado do sistema, ou o hint do SDL). Está na fila e não no "feito" por um
-motivo honesto: **não dá para testar sem device**, e cada tentativa é uma build
-de 30 minutos. É trabalho de sentar com o celular na mão.
+**Tentativa feita em 12/09:** o `interface.nova_tela` agora chama
+`pygame.key.start_text_input()` quando a tela aceita texto (e `stop` quando não).
+No computador o teclado já está sempre ligado, mas no celular o SDL só mostra o
+teclado da tela quando o programa pede — e o jogo nunca pedia. É a causa mais
+provável, e o mesmo conserto valeria para iPhone e Android.
+
+**Continua na fila porque não foi verificado:** conferi que digitar continua
+funcionando no computador, mas se resolve no aparelho só se sabe com o celular na
+mão. Se não resolver, o próximo passo é código nativo (pyjnius no Android).
 
 ### O trem (projeto de restauração)
 

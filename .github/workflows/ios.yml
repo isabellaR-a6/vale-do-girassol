@@ -56,12 +56,37 @@ jobs:
           echo "===== arquivos enviados =====" | tee -a build.log
           ls -1 jogo | tee -a build.log
 
+      # O pygame_ios pergunta a API do GitHub qual e o template mais novo, e faz
+      # isso SEM se identificar: sao 60 chamadas por hora por IP, e os runners
+      # dividem IP com o mundo. Em 12/09/2026 a build falhou exatamente assim
+      # ("403 rate limit exceeded") e nenhum .ipa saiu.
+      #
+      # Baixando o template aqui e passando o zip como 4o argumento, ele usa
+      # use_local_template() e nao chama a API nenhuma vez. A tag sai do redirect
+      # de /releases/latest, que e pagina web e nao tem limite.
+      - name: Baixar o template do pygame-ios
+        id: tmpl
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          REPO="seekerluke/pygame-ios-templates"
+          TAG="$(curl -sIL -o /dev/null -w '%{url_effective}'                  "https://github.com/$REPO/releases/latest" | sed 's#.*/tag/##')"
+          echo "template mais novo: $TAG" | tee -a build.log
+          URL="https://github.com/$REPO/releases/download/$TAG/pygame-ios-template-$PYGAME_CE_VERSION.zip"
+          if curl -sfL -o template.zip "$URL"; then
+            echo "baixado: $URL ($(wc -c < template.zip) bytes)" | tee -a build.log
+            echo "zip=$PWD/template.zip" >> "$GITHUB_OUTPUT"
+          else
+            echo "nao consegui baixar o template; o pygame_ios vai tentar sozinho" | tee -a build.log
+          fi
+
       - name: Gerar projeto Xcode
         id: gen
         continue-on-error: true
         run: |
           set -o pipefail
-          yes "" | pygame_ios jogo main.py "$PYGAME_CE_VERSION" 2>&1 | tee -a build.log
+          # com o 4o argumento ele usa o zip local; sem ele, tenta a API como antes
+          yes "" | pygame_ios jogo main.py "$PYGAME_CE_VERSION" ${{ steps.tmpl.outputs.zip }} 2>&1 | tee -a build.log
 
       - name: Localizar o projeto gerado
         if: always()

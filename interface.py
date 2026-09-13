@@ -90,6 +90,17 @@ class UI:
     # ---------------------------------------------------------- troca de tela
     def nova_tela(self, tela):
         self.tela = tela
+        # No computador o teclado ja esta sempre ligado, mas no celular (iPhone e
+        # Android) o SDL so mostra o teclado da tela se o programa pedir. Sem
+        # isto, nenhuma tela de digitar funciona no aparelho — foi o que a
+        # Isabella encontrou jogando o APK.
+        try:
+            if tela.entrada:
+                pygame.key.start_text_input()
+            else:
+                pygame.key.stop_text_input()
+        except (AttributeError, pygame.error):
+            pass   # pygame antigo ou sem video: seguir sem teclado de tela
         if tela.entrada and not any(o.automatica for o in tela.opcoes):
             # no celular não há teclado físico: botões para digitar (janela do navegador) ou sortear
             extras = [Opcao("Sortear um nome", lambda: tela.entrada(random.choice(NOMES)), automatica=True)]
