@@ -144,6 +144,11 @@ jobs:
           "$PB" -c "Set :CFBundleName $APP_NOME" "$PL" 2>/dev/null || true
           "$PB" -c "Set :CFBundleIdentifier $APP_BUNDLE_ID" "$PL" 2>/dev/null || true
 
+          # versao igual a do source.json (tools/gerar_source.py): se nao bater,
+          # o SideStore recusa a instalacao com erro de versao
+          "$PB" -c "Set :CFBundleShortVersionString 1.0.${{ github.run_number }}" "$PL"
+          "$PB" -c "Set :CFBundleVersion ${{ github.run_number }}" "$PL"
+
           # o jogo e 640x360 paisagem: travar a orientacao evita deformar em retrato
           "$PB" -c "Delete :UISupportedInterfaceOrientations" "$PL" 2>/dev/null || true
           "$PB" -c "Add :UISupportedInterfaceOrientations array" "$PL"
