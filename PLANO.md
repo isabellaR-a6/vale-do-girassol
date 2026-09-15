@@ -156,12 +156,39 @@ para querer**: o que não dá lucro, dá gosto.
 É o sumidouro de dinheiro que falta, e o motivo para continuar jogando depois de
 ter construído tudo que é útil.
 
-### ⚠ Teclado no celular: não dá para digitar no APK (e talvez no iPhone)
+### Ver o acessório antes de escolher (pedido da Isabella, 14/09/2026)
+
+**O problema:** na criação do personagem (`historia.py`, de `criar_pessoa` até
+`escolher_oculos`) cada opção é só um nome — "Tiara", "Laço", "Bandana". O
+retrato no canto (`retrato="jogador"`) só muda **depois** de escolher. Quem não
+conhece o jogo não tem como adivinhar como fica, e escolhe no escuro.
+
+**A ideia:** o retrato mostrar a opção **marcada**, não só a escolhida.
+- No computador: passar o mouse ou as setas por cima já troca o retrato.
+- No celular não existe "passar por cima": o **primeiro toque** marca e mostra no
+  retrato, o **segundo toque** na mesma opção confirma. (Mesmo jeito de
+  loja de roupa em jogo de celular.)
+- Vale para todas as telas de aparência: pele, estilo, cor, roupa, cabeça,
+  brinco, colar e óculos.
+- Onde mexer: a UI já sabe qual opção está marcada (`UI.sel`); falta a tela de
+  aparência avisar o `sprites.definir_jogador` com a opção marcada, e voltar ao
+  que estava se a pessoa desistir.
+
+Tamanho: pequeno. Não muda save nem regra do jogo.
+
+### Teclado no celular ✅ no iPhone (14/09/2026) — falta conferir no APK
 
 **Achado pela Isabella jogando o APK.** No celular o teclado do sistema não abre,
 então nenhuma tela de digitar funciona. Na web isso já estava resolvido
 (`interface.py:107` abre a caixinha do navegador, que chama o teclado); no APK
 não existe navegador nenhum.
+
+**No iPhone (14/09) o teclado abriu** — mas sozinho, assim que a tela de nome
+aparecia, e cobria a pergunta inteira. Agora a caixa mostra "toque aqui para
+digitar", o teclado só abre no toque, o jogo avisa o SDL onde está a caixa
+(`set_text_input_rect`, para ele empurrar a tela para cima) e o "retorno" com a
+caixa vazia esconde o teclado. Falta confirmar no aparelho se a tela sobe mesmo,
+e testar tudo isso no APK.
 
 **O pior já foi contornado (12/09):** as quatro telas que pedem texto agora têm
 alternativa sem teclado. A de batizar animal comprado na feira era a única sem
