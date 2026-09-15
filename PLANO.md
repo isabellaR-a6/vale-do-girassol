@@ -187,8 +187,8 @@ não existe navegador nenhum.
 aparecia, e cobria a pergunta inteira. Agora a caixa mostra "toque aqui para
 digitar", o teclado só abre no toque, o jogo avisa o SDL onde está a caixa
 (`set_text_input_rect`, para ele empurrar a tela para cima) e o "retorno" com a
-caixa vazia esconde o teclado. Falta confirmar no aparelho se a tela sobe mesmo,
-e testar tudo isso no APK.
+caixa vazia esconde o teclado. **Conferido no iPhone pela Isabella: a tela sobe
+junto com o teclado e a caixa fica à vista.** Falta só testar isso no APK.
 
 **O pior já foi contornado (12/09):** as quatro telas que pedem texto agora têm
 alternativa sem teclado. A de batizar animal comprado na feira era a única sem

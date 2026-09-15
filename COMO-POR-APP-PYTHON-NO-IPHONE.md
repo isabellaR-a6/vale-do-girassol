@@ -204,43 +204,55 @@ está do jeito que quero.
 
 ---
 
-# ONDE PAREI (13/09/2026, 01:30)
+# FUNCIONANDO! (14/09/2026, noite)
 
-**Feito e que não precisa refazer:**
+**Os dois jogos rodam no iPhone.** Vale do Girassol 1.0.9 e Cabo de Guerra 1.0.6,
+instalados pelo SideStore, com ícone certo. No Vale: tela deitada, toque,
+teclado subindo a tela e save funcionando.
 
-- Apple ID descartável criado e funcionando (`isabellaradael04@gmail.com`)
-- Número confiável registrado: celular da mãe, recebe SMS
-- "Dispositivos Apple" instalado no notebook (era o que faltava para o cabo
-  funcionar — o erro era `Failed to connect to usbmuxd`)
-- **SideStore instalado no iPhone**, com o arquivo de pareamento no lugar
-- Modo de Desenvolvedor ligado, perfil confiado, LocalDevVPN conectada
-- Os dois `.ipa` compilados e no ar (Vale build-6, Cabo de Guerra build-5)
+**O que está no lugar e não precisa refazer:**
 
-**O que falta: um login.** Só isso. No iPhone, sem cabo e sem notebook.
+- Apple ID descartável (`isabellaradael04@gmail.com`), código por SMS no celular da mãe
+- "Dispositivos Apple" instalado no notebook (sem ele o iloader dá `Failed to connect to usbmuxd`)
+- **SideStore Nightly** no iPhone, com o arquivo de pareamento, logado
+- Modo de Desenvolvedor ligado, perfil confiado, LocalDevVPN
+- As duas fontes adicionadas:
+  - `https://raw.githubusercontent.com/isabellaR-a6/vale-do-girassol/main/source.json`
+  - `https://raw.githubusercontent.com/isabellaR-a6/click/main/source.json`
 
-A Apple bloqueou por excesso de tentativas (429 à tarde, 503 à noite). Isso
-solta sozinho — é esperar e tentar **uma vez**, com alguém de olho no celular
-que recebe o SMS.
+## O que travou no caminho (para não cair de novo)
 
-## Passo a passo do que falta
-
-1. Abrir o **SideStore** → **Settings** → entrar com a conta descartável
-2. Quando pedir o código, alguém lê o SMS e você digita
-3. Na aba **My Apps**, tocar em **Refresh All**
-4. Aba **Sources** → botão **+** → adicionar as duas fontes:
-   - `https://raw.githubusercontent.com/isabellaR-a6/vale-do-girassol/main/source.json`
-   - `https://raw.githubusercontent.com/isabellaR-a6/click/main/source.json`
-   - As duas aparecem como "Jogos da Isabella" (mesmo nome; está na fila para arrumar)
-5. Aba **Browse** → tocar no jogo → **Install**
+1. **O login do SideStore dava 503 em qualquer Wi-Fi.** Não era a rede nem a
+   conta: desde ~10/09/2026 a Apple bloqueia o login que se apresenta como
+   "Xcode", e o SideStore 0.6.4 (o estável) ainda fazia isso. **Saída:** no
+   iloader, botão **"SideStore (Nightly)"** — a versão de teste já tem o conserto.
+   Quando sair um SideStore estável novo, dá para voltar para ele.
+2. **Trocar o SideStore apaga o arquivo de pareamento** → erro "Pairing Required".
+   No iloader: **Gerenciar Arquivo de Pareamento** → SideStore → **Colocar** →
+   no iPhone, **Retry**.
+3. **"The downloaded version does not match the build number"** — a versão
+   dentro do app não batia com a do `source.json`. Consertado no `ios.yml`
+   (agora a CI grava a mesma versão nos dois).
+4. **Ícone do pygame no lugar do girassol** — o Info.plist apontava para o
+   catálogo de ícones do template. Consertado no `ios.yml`.
+5. **Tela preta no Vale** — no iPhone o jogo roda como pacote e não achava os
+   próprios arquivos (`import cenario` falhava). Consertado no topo do `main.py`.
 
 ## Se der errado
 
 | O que aparece | O que fazer |
 |---|---|
-| 429 ou 503 | É a Apple segurando por excesso de tentativa. Parar e esperar. Cada tentativa a mais aumenta a espera. |
+| 503 no login | Ver item 1 acima. **Não ficar tentando**: tentativa repetida vira 429 (bloqueio temporário). |
+| "Pairing Required" | Ver item 2 acima (precisa do notebook e do cabo). |
+| Erro de versão / build number | O `.ipa` e o `source.json` não batem: conferir a última Release no GitHub. |
 | App não abre, "Untrusted" | Ajustes → Geral → VPN e Gerenciamento de Dispositivo → Confiar |
 | Falha ao instalar | Conferir se a **LocalDevVPN está conectada**. É o erro mais comum. |
 | Jogo não aparece na fonte | Puxar a tela para baixo para atualizar |
+| Tela preta num jogo pygame novo | Ver item 5: o `main.py` precisa pôr a própria pasta no `sys.path`. |
+
+**Plano B se o SideStore quebrar de vez:** o iloader instala qualquer `.ipa`
+direto pelo cabo (**Import any IPA**). Funciona, mas aí renovar os 7 dias também
+é pelo cabo.
 
 ## Depois que estiver funcionando
 
