@@ -9,13 +9,15 @@ import random
 import pygame
 
 import sprites
-from config import ALTURA, COR, LARGURA, WEB
+from config import ALTURA, ANDROID, COR, IOS, LARGURA, WEB
 from estado import nome_item
 from fonte import ALTURA_LINHA
 from tela import Opcao
 
 NOMES = ["Luna", "Chico", "Mel", "Bento", "Nina", "Tito", "Jade", "Theo", "Lia", "Pingo", "Cacau", "Fubá"]
 VEL_TEXTO = 75  # caracteres por segundo
+# no celular o teclado e da tela: so abre quando a pessoa toca na caixa de texto
+TECLADO_DE_TELA = ANDROID or IOS
 
 
 class Layout:
@@ -71,6 +73,7 @@ class UI:
         self.pag = 0
         self.chars = 0.0
         self.texto_entrada = ""
+        self.teclado_aberto = False
         self.flutuantes = []
         self.tocar = lambda nome: None  # trocado pelo main para tocar sons
         self._ultimo_blip = 0
@@ -90,17 +93,10 @@ class UI:
     # ---------------------------------------------------------- troca de tela
     def nova_tela(self, tela):
         self.tela = tela
-        # No computador o teclado ja esta sempre ligado, mas no celular (iPhone e
-        # Android) o SDL so mostra o teclado da tela se o programa pedir. Sem
-        # isto, nenhuma tela de digitar funciona no aparelho — foi o que a
-        # Isabella encontrou jogando o APK.
-        try:
-            if tela.entrada:
-                pygame.key.start_text_input()
-            else:
-                pygame.key.stop_text_input()
-        except (AttributeError, pygame.error):
-            pass   # pygame antigo ou sem video: seguir sem teclado de tela
+        # No celular (iPhone e Android) o teclado da tela so abre quando a pessoa
+        # toca na caixa de texto: aberto logo de cara ele cobria a pergunta antes
+        # de dar para ler. No computador o teclado fisico segue ligado direto.
+        self._teclado(bool(tela.entrada) and not TECLADO_DE_TELA)
         if tela.entrada and not any(o.automatica for o in tela.opcoes):
             # no celular não há teclado físico: botões para digitar (janela do navegador) ou sortear
             extras = [Opcao("Sortear um nome", lambda: tela.entrada(random.choice(NOMES)), automatica=True)]
@@ -112,6 +108,23 @@ class UI:
         self.chars = 0.0
         self.texto_entrada = ""
         self._paginar()
+
+    def _teclado(self, ligar):
+        """Liga/desliga a digitacao. No iPhone, o SDL empurra a tela para cima para
+        a caixa de texto (set_text_input_rect) nao ficar escondida atras do teclado."""
+        try:
+            if ligar:
+                pygame.key.set_text_input_rect(self._rect_campo())
+                pygame.key.start_text_input()
+            else:
+                pygame.key.stop_text_input()
+        except (AttributeError, pygame.error):
+            pass   # pygame antigo ou sem video: seguir sem teclado de tela
+        self.teclado_aberto = ligar
+
+    def _rect_campo(self):
+        esc = self.lay.esc
+        return pygame.Rect(self.lay.caixa.x + 14, self._topo_opcoes() + 2, 200 * esc, 6 + 12 * esc)
 
     @staticmethod
     def _digitar(tela):
@@ -217,6 +230,9 @@ class UI:
             if not mostrando_opcoes:
                 self._avancar_texto()
                 return None
+            if t.entrada and self._rect_campo().collidepoint(ev.pos):
+                self._teclado(True)
+                return None
             for i, r in enumerate(self._rects_opcoes()):
                 if r.collidepoint(ev.pos):
                     self.sel = i
@@ -234,6 +250,9 @@ class UI:
             if ev.key == pygame.K_RETURN and self.texto_entrada.strip():
                 self.tocar("ok")
                 return ("entrada", self.texto_entrada.strip())
+            if ev.key == pygame.K_RETURN and TECLADO_DE_TELA:
+                self._teclado(False)   # "retorno" com a caixa vazia: so esconde o teclado
+                return None
             if ev.key == pygame.K_BACKSPACE:
                 self.texto_entrada = self.texto_entrada[:-1]
             elif ev.unicode and ev.unicode.isprintable() and len(self.texto_entrada) < 16:
@@ -313,9 +332,12 @@ class UI:
 
     def _campo_texto(self, s, t):
         esc = self.lay.esc
-        r = pygame.Rect(self.lay.caixa.x + 14, self._topo_opcoes() + 2, 200 * esc, 6 + 12 * esc)
+        r = self._rect_campo()
         arredondado(s, COR["contorno"], r)
         arredondado(s, COR["branco"], r.inflate(-2, -2))
+        if TECLADO_DE_TELA and not self.teclado_aberto and not self.texto_entrada:
+            self.f.desenhar(s, "toque aqui para digitar", r.x + 5, r.y + 2, COR["texto_claro"], esc)
+            return
         fim = self.f.desenhar(s, self.texto_entrada, r.x + 5, r.y + 2, COR["texto"], esc)
         if int(t * 2) % 2:
             s.fill(COR["texto"], (fim + 1, r.y + 2 + 2 * esc, esc, 10 * esc))
@@ -372,7 +394,7 @@ class UI:
                         sombra=COR["verde_ui_esc"], centro=True)
         # dia, estação e clima (no celular: só o essencial, com letra grande)
         if self.celular:
-            info = f"Ano {e.ano} · {e.estacao}"
+            info = f"Ano {e.ano} · {e.estacao} {e.dia_da_estacao}/7"
         else:
             info = f"Ano {e.ano}  ·  {e.estacao} {e.dia_da_estacao}/7  ·  {e.nome_clima}"
         r = pygame.Rect(132, 6 if self.celular else 8, self.f.largura(info, esc) + 18, 6 + 12 * esc)
