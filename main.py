@@ -8,12 +8,17 @@ Controles: mouse/toque, setas + ENTER/ESPAÇO, ou teclas 1-9.  F11 = tela cheia.
 import array
 import asyncio
 import math
+import os
 import sys
+
+# No iPhone o jogo roda como pacote (app/pygame-ios/__main__.py) e a pasta dele
+# nao entra no sys.path: sem isto, "import cenario" falha e a tela fica preta.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import pygame
 
 from cenario import Cenario
-from config import ALTURA, ANDROID, ARTE_A, ESCALA_ARTE, FPS, LARGURA, TITULO_JOGO, COR, WEB
+from config import ALTURA, ANDROID, ARTE_A, ESCALA_ARTE, FPS, IOS, LARGURA, TITULO_JOGO, COR, WEB
 from estado import Estado
 from fonte import FontePixel
 from historia import Historia
@@ -81,7 +86,7 @@ def estado_demo():
 
 def eh_celular():
     """Celular/tablet (tela de toque) usa o layout de letra grande. `--celular` força no PC, para testar."""
-    if "--celular" in sys.argv or ANDROID:
+    if "--celular" in sys.argv or ANDROID or IOS:
         return True
     if not WEB:
         return False
@@ -124,7 +129,7 @@ class Jogo:
         # no navegador o próprio pygbag amplia a tela; no Android ocupa a tela cheia (barras pretas se sobrar)
         if WEB:
             modo = 0
-        elif ANDROID:
+        elif ANDROID or IOS:
             modo = pygame.SCALED | pygame.FULLSCREEN
         else:
             modo = pygame.SCALED | pygame.RESIZABLE

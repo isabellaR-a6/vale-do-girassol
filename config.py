@@ -6,6 +6,8 @@ import sys
 WEB = sys.platform == "emscripten"
 # True quando o jogo roda como app Android (APK gerado pelo Buildozer / python-for-android)
 ANDROID = "ANDROID_ARGUMENT" in os.environ
+# True quando o jogo roda como app de iPhone (.ipa gerado pelo pygame-ios)
+IOS = sys.platform == "ios"
 
 # Resolução lógica (a janela é ampliada em pixels inteiros pelo pygame.SCALED)
 LARGURA, ALTURA = 640, 360
