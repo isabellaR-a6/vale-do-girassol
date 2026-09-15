@@ -161,6 +161,10 @@ jobs:
           if [ -f web/icone_180.png ] && [ -f web/icone_120.png ]; then
             cp web/icone_180.png "$APP/AppIcon60x60@3x.png"
             cp web/icone_120.png "$APP/AppIcon60x60@2x.png"
+            # sem isto o iOS usa o icone do pygame guardado no Assets.car e
+            # ignora os PNG soltos (o mesmo conserto do click)
+            "$PB" -c "Delete :CFBundleIcons:CFBundlePrimaryIcon:CFBundleIconName" "$PL" 2>/dev/null || true
+            "$PB" -c "Delete :CFBundleIcons~ipad:CFBundlePrimaryIcon:CFBundleIconName" "$PL" 2>/dev/null || true
             "$PB" -c "Delete :CFBundleIconFiles" "$PL" 2>/dev/null || true
             "$PB" -c "Add :CFBundleIconFiles array" "$PL"
             "$PB" -c "Add :CFBundleIconFiles:0 string AppIcon60x60" "$PL"
